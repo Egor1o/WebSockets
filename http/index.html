@@ -62,12 +62,32 @@
     <script>
       var form = document.getElementById("form")
       var input = document.getElementById("input")
+      const messages = document.getElementById("messages")
+      let clientOffset = 0
+
+      async function getMessages() {
+        const res = await fetch(`http://localhost:3000/messages?clientOffset=${clientOffset}`)
+        const msgs = await res.json()
+        msgs.forEach((msg) => {
+          const item = document.createElement("li")
+          item.textContent = msg.content
+          messages.appendChild(item)
+          window.scrollTo(0, document.body.scrollHeight)
+          clientOffset++
+        })
+      }
+
+      const intervalID = setInterval(getMessages, 1000)
 
       form.addEventListener("submit", function (e) {
         e.preventDefault()
         if (input.value) {
           console.log("some message will go there")
-          fetch("http://localhost:3000", { method: "POST", body: input.value })
+          fetch("http://localhost:3000", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify({ message: input.value }),
+          })
           input.value = ""
         }
       })

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "performance": "npx artillery run my-scenario.yml",
-    "performance:http": "npx artillery run http-scenario.yml",
+    "performance": "npx artillery run sockets/my-scenario.yml",
+    "performance:http": "npx artillery run http/http-scenario.yml",
     "dev:http": "node http/index.js",
     "dev:sockets": "node sockets/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +15,7 @@
   "dependencies": {
     "artillery": "^2.0.20",
     "artillery-engine-socketio-v3": "^1.2.0",
+    "body-parser": "^1.20.3",
     "express": "^4.21.1",
     "socket.io": "^4.8.0",
     "sqlite": "^5.1.1",
