@@ -32,7 +32,7 @@ async function main() {
   })
 
   io.on("connection", async (socket) => {
-    socket.on("chat message", async (msg, clientOffset, callback) => {
+    socket.on("chat message", async (msg, clientOffset) => {
       let result
       try {
         // store the message in the database
@@ -44,7 +44,7 @@ async function main() {
       } catch (e) {
         if (e.errno === 19 /* SQLITE_CONSTRAINT */) {
           // the message was already inserted, so we notify the client
-          callback()
+          console.error(e)
         } else {
           // nothing to do, just let the client retry
         }
@@ -52,8 +52,6 @@ async function main() {
       }
       // include the offset with the message
       io.emit("chat message", msg, result.lastID)
-      // acknowledge the event
-      callback()
     })
     if (!socket.recovered) {
       // if the connection state recovery was not successful

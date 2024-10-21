@@ -84,13 +84,15 @@
           serverOffset: 0,
         },
         // enable retries
-        ackTimeout: 10000,
-        retries: 3,
+        // ackTimeout: 10000,
+        // retries: 3,
       })
 
       const form = document.getElementById("form")
       const input = document.getElementById("input")
       const messages = document.getElementById("messages")
+
+
 
       form.addEventListener("submit", (e) => {
         e.preventDefault()

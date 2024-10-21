@@ -14,4 +14,4 @@ scenarios:
           url: '/'
           json:
             hello: 'world'
-      count: 100
+      count: 10
