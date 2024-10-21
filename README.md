@@ -32,3 +32,9 @@ Analyzing the performance of WebSockets
 ```sh
   `npm run performance:http`
 ```
+
+## To plot results, make sure you have a Python compiler and Matplotlib installed. Then, in the root folder, run:
+
+```sh
+   `python3 plotter.py`
+```
