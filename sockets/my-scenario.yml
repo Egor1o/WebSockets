@@ -1,27 +1,15 @@
-# my-scenario.yml
 config:
   target: "http://localhost:3000"
   phases:
-    - duration: 60
-      arrivalRate: 5
+    - duration: 20
+      arrivalRate: 10
   socketio:
     transports: ["websocket"]
+  processor: 'builder.js' 
 
 scenarios:
   - name: My sample scenario
     engine: socketio
     flow:
-      - emit:
-          channel: "chat message"  # Event name 
-          data: "Hello from Artillery!"  # The message 
-      - think: 2
-      - emit:
-          channel: "chat message"
-          data: "Another message from Artillery!"
-      - think: 2
-      - emit:
-          channel: "chat message"
-          data: "bomba"  
-      - wait: 
-          socketio: "message" 
-      - think: 2  
+      - function: "setMessage"
+
