@@ -4,6 +4,8 @@ const { join } = require("node:path")
 const { Server } = require("socket.io")
 const sqlite3 = require("sqlite3")
 const { open } = require("sqlite")
+const fs = require('fs');
+const path = require('path');
 
 async function main() {
   // open the database file
@@ -54,21 +56,40 @@ async function main() {
       io.emit("chat message", msg, result.lastID)
       // acknowledge the event
       //callback()
-    })
-    if (!socket.recovered) {
-      // if the connection state recovery was not successful
-      try {
-        await db.each(
-          "SELECT id, content FROM messages WHERE id > ?",
-          [socket.handshake.auth.serverOffset || 0],
-          (_err, row) => {
-            socket.emit("chat message", row.content, row.id)
-          }
-        )
-      } catch (e) {
-        // something went wrong
+      if (!socket.recovered) {
+        // if the connection state recovery was not successful
+        try {
+          await db.each(
+            "SELECT id, content FROM messages WHERE id > ?",
+            [socket.handshake.auth.serverOffset || 0],
+            (_err, row) => {
+              socket.emit("chat message", row.content, row.id)
+            }
+          )
+        } catch (e) {
+          // something went wrong
+        }
       }
-    }
+    })
+
+    socket.on("upload", (file, callback) => {
+      console.log(file);
+      
+      const uploadPath = path.join(__dirname, '../resources', 'uploaded_image.png'); 
+    
+      fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
+
+      fs.writeFile(uploadPath, file, (err) => {
+        if (err) {
+          console.error(err);
+          callback({ message: "failure" });
+        } else {
+          console.log('File successfully saved');
+          callback({ message: "success" });
+        }
+      });
+    });
+
   })
 
   server.listen(3000, () => {

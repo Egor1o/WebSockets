@@ -62,11 +62,16 @@
       <input id="input" autocomplete="off" /><button>Send</button>
       <button id="toggle-btn">Disconnect</button>
     </form>
+    <input type="file" onchange="upload(this.files)" />
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const toggleButton = document.getElementById("toggle-btn")
 
-      
+      function upload(files) {
+        socket.emit("upload", files[0], (status) => {
+          console.log(status);
+        });
+      }
 
       toggleButton.addEventListener("click", (e) => {
         e.preventDefault()
