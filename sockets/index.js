@@ -4,8 +4,8 @@ const { join } = require("node:path")
 const { Server } = require("socket.io")
 const sqlite3 = require("sqlite3")
 const { open } = require("sqlite")
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs")
+const path = require("path")
 let index = 1
 async function main() {
   // open the database file
@@ -50,47 +50,40 @@ async function main() {
           clientOffset
         )
       } catch (e) {
-        if (e.errno === 19 /* SQLITE_CONSTRAINT */) {
-          // the message was already inserted, so we notify the client
-          //callback()
-        } else {
-          // nothing to do, just let the client retry
-        }
         return
       }
       // include the offset with the message
       io.emit("chat message", msg, result.lastID)
       // acknowledge the event
-      //callback()
-      if (!socket.recovered) {
-        // if the connection state recovery was not successful
-        try {
-          await db.each(
-            "SELECT id, content FROM messages WHERE id > ?",
-            [socket.handshake.auth.serverOffset || 0],
-            (_err, row) => {
-              socket.emit("chat message", row.content, row.id)
-            }
-          )
-        } catch (e) {
-          // something went wrong
-        }
-      }
     })
+
+    if (!socket.recovered) {
+      // if the connection state recovery was not successful
+      try {
+        await db.each(
+          "SELECT id, content FROM messages WHERE id > ?",
+          [socket.handshake.auth.serverOffset || 0],
+          (_err, row) => {
+            socket.emit("chat message", row.content, row.id)
+          }
+        )
+      } catch (e) {
+        // something went wrong
+      }
+    }
 
     socket.on("upload", async (file, callback) => {
       try {
         const result = await db.run(
           "INSERT INTO images (image_name, image_data) VALUES (?, ?)",
-          'uploaded_image.png',
-          file 
-        );
-        callback({ message: process.hrtime() });
+          "uploaded_image.png",
+          file
+        )
+        callback({ message: process.hrtime() })
       } catch (err) {
-        callback({ message: "failure" });
+        callback({ message: "failure" })
       }
-    });
-
+    })
   })
 
   server.listen(3000, () => {

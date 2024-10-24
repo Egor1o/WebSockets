@@ -1,0 +1,13 @@
+services:
+  http:
+    build:
+      context: .
+      dockerfile: ./http/Dockerfile
+    ports:
+      - "3002:3000"
+  sockets:
+    build:
+      context: .
+      dockerfile: ./sockets/Dockerfile
+    ports:
+      - "3000:3000"

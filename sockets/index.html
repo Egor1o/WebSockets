@@ -71,8 +71,8 @@
         console.log(imageBuffer)
         socket.emit("upload", files[0], (status) => {
           console.log(files[0])
-          console.log(status);
-        });
+          console.log(status)
+        })
       }
 
       toggleButton.addEventListener("click", (e) => {
@@ -98,8 +98,6 @@
       const form = document.getElementById("form")
       const input = document.getElementById("input")
       const messages = document.getElementById("messages")
-
-
 
       form.addEventListener("submit", (e) => {
         e.preventDefault()
