@@ -6,7 +6,7 @@ const sqlite3 = require("sqlite3")
 const { open } = require("sqlite")
 const fs = require('fs');
 const path = require('path');
-
+let index = 1
 async function main() {
   // open the database file
   const db = await open({
@@ -21,6 +21,12 @@ async function main() {
         client_offset TEXT UNIQUE,
         content TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS images(
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      image_name VARCHAR(255) NOT NULL,
+      image_data LONGBLOB NOT NULL
+    )
   `)
 
   const app = express()
@@ -72,22 +78,17 @@ async function main() {
       }
     })
 
-    socket.on("upload", (file, callback) => {
-      console.log(file);
-      
-      const uploadPath = path.join(__dirname, '../resources', 'uploaded_image.png'); 
-    
-      fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
-
-      fs.writeFile(uploadPath, file, (err) => {
-        if (err) {
-          console.error(err);
-          callback({ message: "failure" });
-        } else {
-          console.log('File successfully saved');
-          callback({ message: "success" });
-        }
-      });
+    socket.on("upload", async (file, callback) => {
+      try {
+        const result = await db.run(
+          "INSERT INTO images (image_name, image_data) VALUES (?, ?)",
+          'uploaded_image.png',
+          file 
+        );
+        callback({ message: process.hrtime() });
+      } catch (err) {
+        callback({ message: "failure" });
+      }
     });
 
   })

@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-  setMessage: setMessage
+  setMessage: setMessage,
+  setImage: setImage
 };
 
 const csvFilePath = path.join(__dirname, 'message_times.csv');
@@ -24,9 +25,31 @@ function setMessage(context, events, done) {
   let startTime = new Date().toISOString();
   
   context.sockets[''].emit('chat message', message);
-  console.log('start', startedAt);
+  //console.log('start', startedAt);
 
   return processSender(context, events, done, message, startedAt, startTime);
+}
+
+function setImage(context, events, done) {
+
+  const filePath = path.join(__dirname, '../resources/image.jpeg');
+
+    fs.readFile(filePath, (err, data) => {
+
+      let startedAt = process.hrtime();
+      let startTime = new Date().toISOString();
+      context.sockets[''].emit('upload', data, (res) => {
+        const delta = markEndTime(startedAt)
+        const endTime = new Date().toISOString(); 
+        saveToCSV('kuva', delta, startTime, endTime);
+      });
+
+      //somwhow works only if this one is included 🧐
+      context.sockets[''].on("upload", (file, callback) => {
+        context('print smthing')
+        return done();
+      });
+  });
 }
 
 function processSender(context, events, done, message, startedAt, startTime) {

@@ -5,10 +5,15 @@ config:
       arrivalRate: 10
   socketio:
     transports: ["websocket"]
-  processor: 'builder.js' 
+  processor: 
+    'builder.js'
 
 scenarios:
-  - name: My sample scenario
+  - name: 'Image Sending'
+    engine: socketio
+    flow:
+      - function: "setImage"
+  - name: 'My sample scenario text'
     engine: socketio
     flow:
       - function: "setMessage"
