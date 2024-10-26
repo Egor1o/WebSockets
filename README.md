@@ -32,6 +32,8 @@ npm run dev
 ```
 
 ## Running tests
+As a side note, check the resources for tests. You can add a blob binary of different sizes, for example, from https://myjob.page/tools/test-files.
+
 Navigate to the `/performance` folder and run
 ```
 npm run install
