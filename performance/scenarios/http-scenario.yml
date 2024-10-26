@@ -1,0 +1,17 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+  # Load & configure a couple of useful plugins
+  # https://docs.art/reference/extensions
+scenarios:
+  - flow:
+    - loop:
+      - get:
+          url: '/'
+      - post:
+          url: '/'
+          json:
+            hello: 'world'
+      count: 10

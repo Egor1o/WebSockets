@@ -1,0 +1,20 @@
+{
+    "name": "websocket",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "performance": "npx artillery run sockets/my-scenario.yml",
+      "performance:http": "npx artillery run http/http-scenario.yml",
+      "dev:http": "node http/index.js",
+      "dev:sockets": "node sockets/index.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "socket.io": "^4.8.0",
+      "socket.io-stream": "^0.9.1"
+    }
+  }
+  
