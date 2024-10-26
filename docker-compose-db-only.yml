@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  database:
+    container_name: postgres_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: websocket
+    ports:
+      - "4000:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  migrations:
+    image: flyway/flyway
+    environment:
+      FLYWAY_USER: root
+      FLYWAY_PASSWORD: root
+      FLYWAY_URL: jdbc:postgresql://database:5432/websocket
+    command: -connectRetries=60 -baselineOnMigrate=true migrate
+    depends_on:
+      - database
+    volumes:
+      - .:/flyway/sql
+
+volumes:
+  pgdata:
+
