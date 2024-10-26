@@ -1,13 +1,14 @@
 const postgres = require('postgres')
-const PGHOST = "database"; //for local development change to 127.0.0.1
+const DB_HOST = process.env.DB_HOST ?? '127.0.0.1'
+const DB_PORT = process.env.DB_PORT ?? 4000
 
 // export const sql = postgres({ host: PGHOST, database: PGDATABASE, username: PGUSER, password: PGPASSWORD, port: 5432 });
 const sql = postgres({
-    host: PGHOST,
+    host: DB_HOST,
     database: 'websocket',
     username: 'root',
     password: 'root',
-    port: 5432 // for local development change to 4000 
+    port: DB_PORT
 });
 
 

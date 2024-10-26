@@ -8,7 +8,7 @@ module.exports = {
   setImage: setImage
 };
 
-const csvFilePath = path.join(__dirname, 'results.csv');
+const csvFilePath = path.join(__dirname, '../results.csv');
 
 if (!fs.existsSync(csvFilePath)) {
   fs.writeFileSync(csvFilePath, `"message","time","started","ended"\n`);

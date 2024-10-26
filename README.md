@@ -9,25 +9,30 @@ protocols, with a main focus on the WebSocket protocol
 Before starting development, please ensure that Docker and Node.js are installed on your device.
 
 ### Development in docker
-1. In the root folder, run following command to build project
+1. In the root folder, run following command to build project.
 ```
 docker compose build
 ```
-2. Then, start the project
+2. Then, start the project.
 ```
 docker compose up
 ```
 Use `docker compose down`  to stop containers, remove container, networks, volumes, and images created by `up`.
 
 ### Local development 
-Local development is still in progress (needs adjustments), but for now, check protocols/common/database.js and then run:
+For local development, you will still need Docker to start the database.
+First, in the root folder, run:
+```
+docker compose -f docker-compose-db-only.yml up
+```
+Then navigate to `/protocols` and run:
 ```
 npm install
 npm run dev
 ```
 
 ## Running tests
-Navigate to the performance folder and run
+Navigate to the `/performance` folder and run
 ```
 npm run install
 ```
@@ -38,4 +43,14 @@ npx artillery run scenarios/:scenario-name
 or use:
 ```
 npm run performance:scenario-name
+```
+
+## Results plotting
+Make sure you have Python/Python3 and Matplotlib installed on your device, 
+and that there is data available for plotting 
+(meaning the performance tests have been run). 
+Then, navigate to the `/plotters` directory and run:
+
+```
+python3 plotter.py
 ```

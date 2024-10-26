@@ -5,7 +5,7 @@ x = []
 y = []
 first = 1
 
-with open('./sockets/message_times.csv', 'r') as csvfile:
+with open('../performance/results.csv', 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')
     for row in plots:
         if first == 1:
