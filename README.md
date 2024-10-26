@@ -1,48 +1,41 @@
-# WebSocket
+# WebSockets
 
-Analyzing the performance of WebSockets
+This is the code for the 2024 project of the course WWW Applications.
+Our goal is to analyze the performance of different communication 
+protocols, with a main focus on the WebSocket protocol
 
-- Install dependencies:
 
-```sh
-   npm install
+## Start development
+Before starting development, please ensure that Docker and Node.js are installed on your device.
+
+### Development in docker
+1. In the root folder, run following command to build project
+```
+docker compose build
+```
+2. Then, start the project
+```
+docker compose up
+```
+Use `docker compose down`  to stop containers, remove container, networks, volumes, and images created by `up`.
+
+### Local development 
+Local development is still in progress (needs adjustments), but for now, check protocols/common/database.js and then run:
+```
+npm install
+npm run dev
 ```
 
-## Start docker
-To start docker run this shell command in the root folder
-```sh
-   docker compose up
+## Running tests
+Navigate to the performance folder and run
 ```
-If you are going to modify existing migrations, please remove volumes and rerun the container. Otherwise, add new migration into flyway/sql according to V${Number}__name.sql. For example V1__initial.sql
-
-
-## To run and test socket server
-
-- Start server:
-
-```sh
-  npm run dev:sockets
+npm run install
 ```
-- Run tests:
-```sh
-  npm run performance
+After the installation check scenarios from the `scenarios` folder. You can either directly run:
 ```
-
-## or to run and test http server
-
-- Start server:
-
-```sh
-  npm run dev:http
+npx artillery run scenarios/:scenario-name
 ```
-
-- Run tests:
-```sh
-  npm run performance:http
+or use:
 ```
-
-## To plot results, make sure you have a Python compiler and Matplotlib installed. Then, in the root folder, run:
-
-```sh
-   python3 plotter.py
+npm run performance:scenario-name
 ```
