@@ -4,22 +4,19 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "performance": "npx artillery run sockets/my-scenario.yml",
-      "performance:http": "npx artillery run http/http-scenario.yml",
-      "dev:http": "node http/index.js",
-      "dev:sockets": "node sockets/index.js",
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "dev:http": "nodemon http/index.js",
+        "dev:sockets": "nodemon sockets/index.js",
+        "dev": "concurrently \"npm run dev:http\" \"npm run dev:sockets\""
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-      "body-parser": "^1.20.3",
-      "express": "^4.21.1",
-      "postgres": "^3.4.4",
-      "socket.io": "^4.8.0",
-      "socket.io-stream": "^0.9.1",
-      "sqlite": "^5.1.1",
-      "sqlite3": "^5.1.7"
+        "body-parser": "^1.20.3",
+        "concurrently": "^9.0.1",
+        "express": "^4.21.1",
+        "nodemon": "^3.1.7",
+        "postgres": "^3.4.4",
+        "socket.io": "^4.8.0",
+        "socket.io-stream": "^0.9.1"
     }
-  }
-  
+}

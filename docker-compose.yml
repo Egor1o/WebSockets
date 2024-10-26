@@ -6,6 +6,10 @@ services:
     build: protocols
     ports:
       - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - "./protocols/:/app"
+      - /app/node_modules
 
   database:
     container_name: postgres_container
@@ -30,7 +34,8 @@ services:
     depends_on:
       - database
     volumes:
-      - ./flyway/sql:/flyway/sql
+      - .:/flyway/sql
 
 volumes:
   pgdata:
+

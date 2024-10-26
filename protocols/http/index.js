@@ -1,51 +1,50 @@
-const express = require("express")
-const app = express()
-const http = require("http")
-const sqlite3 = require("sqlite3")
-const { open } = require("sqlite")
-const bodyParser = require("body-parser")
-const server = http.createServer(app)
+const express = require("express");
+const { createServer } = require("http");
+const { join } = require("path");
+const { sql } = require("../common/database"); // Adjust the path to `database.js` if needed
+
+const app = express();
+const server = createServer(app);
 
 async function main() {
-  app.use(bodyParser.json())
-  const db = await open({
-    filename: "./http/chat.db",
-    driver: sqlite3.Database,
-  })
-
-  // create our 'messages' table (you can ignore the 'client_offset' column for now)
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      content TEXT
-    );
-  `)
+  app.use(express.json()); // `express.json()` replaces bodyParser.json()
 
   app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html")
-  })
+    res.sendFile(join(__dirname, "index.html"));
+  });
 
   app.get("/messages", async (req, res) => {
-    const offset = req.query.clientOffset
-    res.json((await db.all("SELECT id, content FROM messages WHERE id > ?", offset)) || [])
-  })
+    try {
+      const offset = req.query.clientOffset || 0;
+      const messages = await sql`
+        SELECT id, content 
+        FROM messages 
+        WHERE id > ${offset};
+      `;
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.sendStatus(500);
+    }
+  });
 
   app.post("/", async (req, res) => {
-    let result
     try {
-      // store the message in the database
-      const msg = req.body.message
-      result = await db.run("INSERT INTO messages (content) VALUES (?)", msg)
-      res.sendStatus(200)
-    } catch (e) {
-      console.error(e)
-      res.sendStatus(500)
+      const msg = req.body.message;
+      await sql`
+        INSERT INTO messages (content) 
+        VALUES (${msg});
+      `;
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error inserting message:", error);
+      res.sendStatus(500);
     }
-  })
+  });
 
-  server.listen(3000, () => {
-    console.log("listening on *:3000")
-  })
+  server.listen(3001, () => {
+    console.log("Listening on http://localhost:3001");
+  });
 }
 
-main()
+main();

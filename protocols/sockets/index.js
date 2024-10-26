@@ -43,7 +43,7 @@ async function main() {
     ss(socket).on('upload', (stream, callback) =>  {
 
       // removed db functionality from here, since it is not a good idea to store big files in db.
-      const filePath = path.join(__dirname, '/bobik.bin');
+      const filePath = path.join(__dirname, 'bobik.bin');
       stream.pipe(fs.createWriteStream(filePath)).on('finish', () => {
         stream.end()
         callback({message: process.hrtime()})
