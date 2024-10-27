@@ -3,6 +3,11 @@ config:
   phases:
     - duration: 10
       arrivalRate: 10
+  variables:
+    file:
+      - "../../resources/10MB.bin"
+      - "../../resources/20MB.bin"
+      - "../../resources/civic_renewal_forms.zip"
   socketio:
     transports: ["websocket"]
   processor: 

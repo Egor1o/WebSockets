@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
 import csv
+import sys
 
 x = []
 y = []
 first = 1
+test = sys.argv[1]
 
-with open('../performance/results.csv', 'r') as csvfile:
+with open('../performance/{}'.format(test), 'r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')
     for row in plots:
         if first == 1:
@@ -21,7 +23,7 @@ plt.bar(x_indices, y, color='g', width=0.4, label="Time")
 
 plt.xlabel('Emit events')
 plt.ylabel('Time taken to receive (ms)')
-plt.title('WebSocket Event Times')
+plt.title('WebSocket Event Times ({})'.format(test))
 plt.legend()
 
 plt.xticks(x_indices, '', rotation=45, ha='right')

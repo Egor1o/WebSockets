@@ -68,7 +68,7 @@
       const toggleButton = document.getElementById("toggle-btn")
       function upload(files) {
         console.log(files[0])
-        console.log(imageBuffer)
+        // console.log(imageBuffer)
         socket.emit("upload", files[0], (status) => {
           console.log(files[0])
           console.log(status);
