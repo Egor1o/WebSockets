@@ -36,7 +36,7 @@ As a side note, check the resources for tests. You can add a blob binary of diff
 
 Navigate to the `/performance` folder and run
 ```
-npm run install
+npm install
 ```
 After the installation check scenarios from the `scenarios` folder. You can either directly run:
 ```
@@ -54,5 +54,11 @@ and that there is data available for plotting
 Then, navigate to the `/plotters` directory and run:
 
 ```
-python3 plotter.py
+python3 plotter.py <result filename>
+```
+
+for example: 
+
+```
+python3 plotter.py results_10MB.csv
 ```
