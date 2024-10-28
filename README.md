@@ -54,11 +54,5 @@ and that there is data available for plotting
 Then, navigate to the `/plotters` directory and run:
 
 ```
-python3 plotter.py <result filename>
-```
-
-for example: 
-
-```
-python3 plotter.py results_10MB.csv
+python3 plotter.py
 ```
