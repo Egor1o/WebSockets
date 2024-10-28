@@ -6,6 +6,12 @@ const ss = require("socket.io-stream")
 module.exports = {
   setMessage: setMessage,
   setImage: setImage,
+  deleteResults,
+}
+
+function deleteResults(context, events, done) {
+  fs.rmSync(path.join(__dirname, "../results"), { recursive: true, force: true })
+  done()
 }
 
 function markEndTime(startedAt) {
@@ -51,7 +57,7 @@ function processSender(context, events, done, message, startedAt, startTime) {
     const delta = markEndTime(startedAt)
     let endTime = new Date().toISOString()
     //console.log(`Time taken ${delta}`);
-    saveToCSV("../results_chat.csv", message, delta, startTime, endTime)
+    saveToCSV("../results/results_chat.csv", message, delta, startTime, endTime)
     context.sockets[""].off("chat message")
     return done()
   })
@@ -59,12 +65,21 @@ function processSender(context, events, done, message, startedAt, startTime) {
 
 function createFileName(file) {
   let name = file.split("/").at(-1).split(".").at(0)
-  const fileName = `../results_${name}.csv`
+  const fileName = `../results/results_${name}.csv`
   return fileName
 }
 
 function saveToCSV(fileName, message, timeTaken, started, ended) {
   const csvFilePath = path.join(__dirname, fileName)
+  const folderName = path.join(__dirname, "../results")
+
+  try {
+    if (!fs.existsSync(folderName)) {
+      fs.mkdirSync(folderName)
+    }
+  } catch (err) {
+    console.error(err)
+  }
 
   if (!fs.existsSync(csvFilePath)) {
     fs.writeFileSync(csvFilePath, `"message","time","started","ended"\n`)

@@ -13,6 +13,11 @@ config:
   processor: 
     '../utils/builder.js'
 
+before:
+  engine: socketio
+  flow:
+    - function: "deleteResults"
+
 scenarios:
   - name: 'Image Sending'
     engine: socketio
