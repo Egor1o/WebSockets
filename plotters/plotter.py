@@ -1,32 +1,38 @@
 import matplotlib.pyplot as plt
 import csv
-import sys
+import os
 
-x = []
-y = []
-first = 1
-test = sys.argv[1]
 
-with open('../performance/{}'.format(test), 'r') as csvfile:
-    plots = csv.reader(csvfile, delimiter=',')
-    for row in plots:
-        if first == 1:
-            first = 2
-            continue
-        print(row)
-        x.append(row[0]) 
-        y.append(float(row[1]))
+folderName = os.path.abspath('../performance/results')
+files = [f for f in os.listdir(folderName)]
+print(files)
+print(os.path.abspath('../performance/results'))
 
-x_indices = range(len(x))
+for f in files:
+    x = []
+    y = []
+    first = 1
+    print(f)
+    with open(os.path.join(folderName, f), 'r') as csvfile:
+        plots = csv.reader(csvfile, delimiter=',')
+        for row in plots:
+            if first == 1:
+                first = 2
+                continue
+            print(row)
+            x.append(row[0]) 
+            y.append(float(row[1]))
 
-plt.bar(x_indices, y, color='g', width=0.4, label="Time")
+    x_indices = range(len(x))
 
-plt.xlabel('Emit events')
-plt.ylabel('Time taken to receive (ms)')
-plt.title('WebSocket Event Times ({})'.format(test))
-plt.legend()
+    plt.bar(x_indices, y, color='g', width=0.4, label="Time")
 
-plt.xticks(x_indices, '', rotation=45, ha='right')
+    plt.xlabel('Emit events')
+    plt.ylabel('Time taken to receive (ms)')
+    plt.title('WebSocket Event Times ({})'.format(f))
+    plt.legend()
 
-plt.tight_layout()
-plt.show()
+    plt.xticks(x_indices, '', rotation=45, ha='right')
+
+    plt.tight_layout()
+    plt.show()
