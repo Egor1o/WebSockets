@@ -36,7 +36,7 @@ As a side note, check the resources for tests. You can add a blob binary of diff
 
 Navigate to the `/performance` folder and run
 ```
-npm run install
+npm install
 ```
 After the installation check scenarios from the `scenarios` folder. You can either directly run:
 ```
