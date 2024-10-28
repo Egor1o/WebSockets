@@ -7,7 +7,7 @@ config:
     file:
       - "../../resources/10MB.bin"
       - "../../resources/20MB.bin"
-      - "../../resources/civic_renewal_forms.zip"
+      - "../../resources/1MB.zip"
   socketio:
     transports: ["websocket"]
   processor: 
