@@ -9,8 +9,6 @@ module.exports = {
   deleteResults,
 }
 
-//mock
-
 function deleteResults(context, events, done) {
   fs.rmSync(path.join(__dirname, "../results"), { recursive: true, force: true })
   done()
@@ -19,7 +17,7 @@ function deleteResults(context, events, done) {
 function markEndTime(startedAt) {
   let endedAt = process.hrtime(startedAt)
   let delta = endedAt[0] * 1e9 + endedAt[1] //nanoseconds
-  console.log("time taken", delta / 1e9)
+  //console.log("time taken", delta / 1e9)
   return delta / 1e6
 }
 
@@ -40,7 +38,7 @@ function setImage(context, events, done) {
   let startedAt = process.hrtime()
   let startTime = new Date().toISOString()
 
-  console.log("trying to do something")
+
 
   //this one emulates client uploading data.
   ss(context.sockets[""]).emit("upload", stream, (res) => {
