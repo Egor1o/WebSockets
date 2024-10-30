@@ -9,6 +9,8 @@ module.exports = {
   deleteResults,
 }
 
+//mock
+
 function deleteResults(context, events, done) {
   fs.rmSync(path.join(__dirname, "../results"), { recursive: true, force: true })
   done()
