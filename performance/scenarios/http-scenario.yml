@@ -1,17 +1,26 @@
 config:
   target: "http://localhost:3001"
+  tls:
+    rejectUnauthorized: false
   phases:
     - duration: 10
-      arrivalRate: 1
+      arrivalRate: 10
+  variables:
+    file:
+      - "../../../resources/10MB.bin"
+      - "../../../resources/20MB.bin"
+      - "../../../resources/1MB.zip"
+  processor: 
+    '../utils/builders/http.js'
+
+before:
+  engine: http
+  flow:
+    - function: "deleteResults"
   # Load & configure a couple of useful plugins
   # https://docs.art/reference/extensions
 scenarios:
-  - flow:
-    - loop:
-      - get:
-          url: '/'
-      - post:
-          url: '/'
-          json:
-            message: 'hello'
-      count: 10
+  - name: 'Sending messages'
+    engine: http
+    flow:
+      - function: "setMessage"

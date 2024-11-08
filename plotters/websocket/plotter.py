@@ -3,10 +3,10 @@ import csv
 import os
 
 
-folderName = os.path.abspath('../performance/results')
+folderName = os.path.abspath('../performance/websocket/results')
 files = [f for f in os.listdir(folderName)]
 print(files)
-print(os.path.abspath('../performance/results'))
+print(os.path.abspath('../performance/websocket/results'))
 
 for f in files:
     x = []

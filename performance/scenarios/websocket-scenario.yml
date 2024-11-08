@@ -5,13 +5,13 @@ config:
       arrivalRate: 10
   variables:
     file:
-      - "../../resources/10MB.bin"
-      - "../../resources/20MB.bin"
-      - "../../resources/1MB.zip"
+      - "../../../resources/10MB.bin"
+      - "../../../resources/20MB.bin"
+      - "../../../resources/1MB.zip"
   socketio:
     transports: ["websocket"]
   processor: 
-    '../utils/builder.js'
+    '../utils/builders/websocket.js'
 
 before:
   engine: socketio
