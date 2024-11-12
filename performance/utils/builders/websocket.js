@@ -40,7 +40,7 @@ function setImage(context, events, done) {
     const delta = markEndTime(startedAt)
     const endTime = new Date().toISOString()
     const fileName = createFileName(context.vars.file)
-    saveToCSV(fileName, "kuva", delta, startTime, endTime)
+    saveToCSV(fileName, "kuva", delta, startTime, endTime, "websocket")
     return done()
   })
   fs.createReadStream(filePath).pipe(stream)
@@ -52,7 +52,7 @@ function processSender(context, events, done, message, startedAt, startTime) {
     let endTime = new Date().toISOString()
     //console.log(`Time taken ${delta}`);
     context.sockets[""].off("chat message")
-    saveToCSV("results_chat.csv", "websocket", message, delta, startTime, endTime)
+    saveToCSV("results_chat.csv", message, delta, startTime, endTime, "websocket")
     return done()
   })
 }

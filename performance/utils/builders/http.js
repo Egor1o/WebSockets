@@ -59,7 +59,7 @@ try {
     const delta = markEndTime(startedAt)
     let endTime = new Date().toISOString()
     //console.log(`Time taken ${delta}`);
-    saveToCSV("results_chat.csv", "http", message, delta, startTime, endTime)
+    saveToCSV("results_chat.csv", message, delta, startTime, endTime, "http")
 } catch(err) {
   console.log(err)
 }

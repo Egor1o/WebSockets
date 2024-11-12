@@ -9,27 +9,39 @@ module.exports = {
 }
 
 function deleteResults(context, events, done) {
-  fs.rmSync(path.join(__dirname, "../results"), { recursive: true, force: true })
-  done()
+  console.log("PROTOKOLAAAAAAAuuuuuuuuuuENGINEE", context.scenario.engine)
+  
+  switch (context.scenario.engine) {
+    case "socketio": {
+      fs.rmSync(path.join(__dirname, "../results/websocket"), { recursive: true, force: true })
+      done()
+      break
+    }
+    case "http": {
+      done()
+      break
+    }
+  }
 }
 
 function createFileName(file) {
   let name = file.split("/").at(-1).split(".").at(0)
-  const fileName = `../results/results_${name}.csv`
+  const fileName = `results_${name}.csv`
   return fileName
 }
 
-function saveToCSV(fileName,protocol, message, timeTaken, started, ended) {
+function saveToCSV(fileName, message, timeTaken, started, ended, protocol) {
+  console.log("PROTOKOLAAAAAAA", protocol, fileName)
   const folderName = path.join(__dirname, "../results", protocol)
-  
+
   try {
     if (!fs.existsSync(folderName)) {
-      fs.mkdirSync(folderName, {recursive: true})
+      fs.mkdirSync(folderName, { recursive: true })
     }
   } catch (err) {
     console.error(err)
   }
-  
+
   const csvFilePath = path.join(folderName, fileName)
   if (!fs.existsSync(csvFilePath)) {
     fs.writeFileSync(csvFilePath, `"message","time","started","ended"\n`)
