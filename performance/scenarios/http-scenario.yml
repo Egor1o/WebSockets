@@ -24,3 +24,7 @@ scenarios:
     engine: http
     flow:
       - function: "setMessage"
+  - name: "Testing files"
+    engine: http
+    flow:
+      - function: "testImages"

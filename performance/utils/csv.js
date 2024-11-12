@@ -9,8 +9,6 @@ module.exports = {
 }
 
 function deleteResults(context, events, done) {
-  console.log("PROTOKOLAAAAAAAuuuuuuuuuuENGINEE", context.scenario.engine)
-  
   switch (context.scenario.engine) {
     case "socketio": {
       fs.rmSync(path.join(__dirname, "../results/websocket"), { recursive: true, force: true })
@@ -18,6 +16,8 @@ function deleteResults(context, events, done) {
       break
     }
     case "http": {
+      fs.rmSync(path.join(__dirname, "../results/http"), { recursive: true, force: true })
+      fs.rmSync(path.join(__dirname, "../../protocols/uploads"), { recursive: true, force: true })
       done()
       break
     }
@@ -31,7 +31,6 @@ function createFileName(file) {
 }
 
 function saveToCSV(fileName, message, timeTaken, started, ended, protocol) {
-  console.log("PROTOKOLAAAAAAA", protocol, fileName)
   const folderName = path.join(__dirname, "../results", protocol)
 
   try {

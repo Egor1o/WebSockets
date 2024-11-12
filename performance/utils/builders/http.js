@@ -5,8 +5,8 @@ const { deleteResults, createFileName, saveToCSV } = require("../csv")
 
 module.exports = {
   setMessage: setMessage,
-  setImage: setImage,
   deleteResults,
+  testImages,
 }
 
 let clientOffset = -1
@@ -32,38 +32,33 @@ async function setMessage(context, events) {
   return processSender(context, events, message, startedAt, startTime)
 }
 
-//need adjustments for different sizes. Use Artillery variables pls.
-function setImage(context, events, done) {
-  //console.log(context)
-  const filePath = path.join(__dirname, context.vars.file)
-  const stream = ss.createStream()
+async function testImages(context, events) {
   let startedAt = process.hrtime()
   let startTime = new Date().toISOString()
+  const form = new FormData()
+  const filePath = path.join(__dirname, context.vars.file)
+  const file = await fs.openAsBlob(filePath)
+  form.append("file", file)
+  await fetch("http://localhost:3001/file", {
+    method: "POST",
+    body: form,
+  }).catch((err) => console.log(err))
 
-  //this one emulates client uploading data.
-  ss(context.sockets[""]).emit("upload", stream, (res) => {
-    console.log(res.message)
-    const delta = markEndTime(startedAt)
-    const endTime = new Date().toISOString()
-    const fileName = createFileName(context.vars.file)
-    saveToCSV(fileName, "kuva", delta, startTime, endTime)
-    return done()
-  })
-  fs.createReadStream(filePath).pipe(stream)
+  const delta = markEndTime(startedAt)
+  const endTime = new Date().toISOString()
+  const fileName = createFileName(context.vars.file)
+  saveToCSV(fileName, "kuva", delta, startTime, endTime, "http")
 }
 
 async function processSender(context, events, message, startedAt, startTime) {
-try {
-  const res = await fetch(`http://localhost:3001/messages?clientOffset=${clientOffset}`)
-  await res.json()
+  try {
+    const res = await fetch(`http://localhost:3001/messages?clientOffset=${clientOffset}`)
+    await res.json()
     const delta = markEndTime(startedAt)
     let endTime = new Date().toISOString()
     //console.log(`Time taken ${delta}`);
     saveToCSV("results_chat.csv", message, delta, startTime, endTime, "http")
-} catch(err) {
-  console.log(err)
-}
-
-
-
+  } catch (err) {
+    console.log(err)
+  }
 }

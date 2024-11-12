@@ -28,7 +28,6 @@ function setMessage(context, events, done) {
 
 //need adjustments for different sizes. Use Artillery variables pls.
 function setImage(context, events, done) {
-  //console.log(context)
   const filePath = path.join(__dirname, context.vars.file)
   const stream = ss.createStream()
   let startedAt = process.hrtime()
@@ -36,7 +35,6 @@ function setImage(context, events, done) {
 
   //this one emulates client uploading data.
   ss(context.sockets[""]).emit("upload", stream, (res) => {
-    console.log(res.message)
     const delta = markEndTime(startedAt)
     const endTime = new Date().toISOString()
     const fileName = createFileName(context.vars.file)

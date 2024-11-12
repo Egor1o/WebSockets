@@ -40,11 +40,11 @@ npm install
 ```
 After the installation check scenarios from the `scenarios` folder. You can either directly run:
 ```
-npx artillery run scenarios/:scenario-name
+npx artillery run scenarios/:<scenario-name>
 ```
 or use:
 ```
-npm run performance:scenario-name
+npm run performance:<scenario-name>
 ```
 
 ## Results plotting
@@ -54,5 +54,5 @@ and that there is data available for plotting
 Then, navigate to the `/plotters` directory and run:
 
 ```
-python3 plotter.py
+python3 plotter.py <protocol>
 ```

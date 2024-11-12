@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
 import csv
 import os
+import sys
 
-
-folderName = os.path.abspath('../performance/websocket/results')
+protocol = sys.argv[1]
+folderName = os.path.abspath('../performance/results/{}'.format(protocol))
 files = [f for f in os.listdir(folderName)]
 print(files)
-print(os.path.abspath('../performance/websocket/results'))
+print(os.path.abspath('../performance/{}/results'.format(protocol)))
 
 for f in files:
     x = []
@@ -29,7 +30,7 @@ for f in files:
 
     plt.xlabel('Emit events')
     plt.ylabel('Time taken to receive (ms)')
-    plt.title('WebSocket Event Times ({})'.format(f))
+    plt.title('{} Event Times ({})'.format(protocol, f))
     plt.legend()
 
     plt.xticks(x_indices, '', rotation=45, ha='right')
