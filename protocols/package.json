@@ -17,6 +17,9 @@
         "nodemon": "^3.1.7",
         "postgres": "^3.4.4",
         "socket.io": "^4.8.0",
-        "socket.io-stream": "^0.9.1"
+        "socket.io-stream": "^0.9.1",
+        "@grpc/grpc-js": "^1.12.2",
+        "@grpc/proto-loader": "^0.7.13",
+        "grpc-tools": "^1.12.4"
     }
 }
