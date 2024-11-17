@@ -3,11 +3,17 @@ import { sleep } from 'k6';
 import { open, SeekMode } from 'k6/experimental/fs';
 import encoding from 'k6/encoding';
 
-const file = await open('../resources/10MB.bin', 'b');
+const file = await open('../../resources/10MB.bin', 'b');
 const GRPC_ADDR = __ENV.GRPC_ADDR || 'localhost:50051';
-const GRPC_PROTO_PATH = __ENV.GRPC_PROTO_PATH || '../protocols/gRPC/.proto';
+const GRPC_PROTO_PATH = __ENV.GRPC_PROTO_PATH || '../../protocols/gRPC/.proto';
 const client = new Client();
 client.load([], GRPC_PROTO_PATH);
+
+export let options ={
+    vus:'100',
+    duration: '10s',
+    iterations: '100'
+}
 
 //k6 tests start with exported functions like this
 export default async () => {
