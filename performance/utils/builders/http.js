@@ -7,9 +7,15 @@ module.exports = {
   setMessage: setMessage,
   deleteResults,
   testImages,
+  clearIntervals,
 }
 
-let clientOffset = -1
+const intervalIDs = []
+
+function clearIntervals(context, events, done) {
+  intervalIDs.forEach(clearInterval)
+  done()
+}
 
 function markEndTime(startedAt) {
   let endedAt = process.hrtime(startedAt)
@@ -18,18 +24,45 @@ function markEndTime(startedAt) {
   return delta / 1e6
 }
 
-async function setMessage(context, events) {
-  let message = "Artillery"
+function setMessage(context, events, done) {
   let startedAt = process.hrtime()
-  let startTime = new Date().toISOString()
-  await fetch("http://localhost:3001", {
+  fetch("http://localhost:3001", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: `${message}` }),
+    body: JSON.stringify({ message: startedAt, startTime: new Date().toISOString() }),
   }).catch((err) => console.log(err))
-  clientOffset++
+  return httpPoller(context, events, done)
+}
 
-  return processSender(context, events, message, startedAt, startTime)
+async function fetchMessage(clientOffset) {
+  try {
+    const res = await fetch(`http://localhost:3001/messages?clientOffset=${clientOffset}`)
+    const messages = await res.json()
+    if (messages.length === 0) return clientOffset
+    const latest = messages.at(-1)
+    const delta = markEndTime(latest.content.split(",").map(parseFloat))
+    let endTime = new Date().toISOString()
+    //console.log(`Time taken ${delta}`);
+    if (clientOffset !== 0) {
+      saveToCSV("results_chat.csv", latest.content, delta, latest.content, endTime, "http")
+    }
+    return messages.length + clientOffset
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+async function httpPoller(context, events, done) {
+  let clientOffset = 0
+  intervalIDs.push(
+    setInterval(
+      async () => {
+        clientOffset = await fetchMessage(clientOffset)
+      },
+      200,
+    )
+  )
+  done()
 }
 
 async function testImages(context, events) {
@@ -48,17 +81,4 @@ async function testImages(context, events) {
   const endTime = new Date().toISOString()
   const fileName = createFileName(context.vars.file)
   saveToCSV(fileName, "kuva", delta, startTime, endTime, "http")
-}
-
-async function processSender(context, events, message, startedAt, startTime) {
-  try {
-    const res = await fetch(`http://localhost:3001/messages?clientOffset=${clientOffset}`)
-    await res.json()
-    const delta = markEndTime(startedAt)
-    let endTime = new Date().toISOString()
-    //console.log(`Time taken ${delta}`);
-    saveToCSV("results_chat.csv", message, delta, startTime, endTime, "http")
-  } catch (err) {
-    console.log(err)
-  }
 }

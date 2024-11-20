@@ -3,7 +3,7 @@ const multer = require("multer")
 const { createServer } = require("http")
 const { join } = require("path")
 const { sql } = require("../common/database") // Adjust the path to `database.js` if needed
-const { log } = require("console")
+const fs = require("fs")
 
 const app = express()
 const server = createServer(app)
@@ -44,9 +44,10 @@ async function main() {
     }
   })
 
-  const upload = multer({ dest: "./uploads" }).single("file")
+  const upload = multer({ dest: "./http/uploads" }).single("file")
 
   app.post("/file", function (req, res) {
+    if (!fs.existsSync("./http/uploads")) fs.mkdirSync("./http/uploads")
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {
         console.log(err)

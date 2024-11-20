@@ -17,7 +17,7 @@ function deleteResults(context, events, done) {
     }
     case "http": {
       fs.rmSync(path.join(__dirname, "../results/http"), { recursive: true, force: true })
-      fs.rmSync(path.join(__dirname, "../../protocols/uploads"), { recursive: true, force: true })
+      fs.rmSync(path.join(__dirname, "../../protocols/http/uploads"), { recursive: true, force: true })
       done()
       break
     }

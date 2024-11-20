@@ -19,6 +19,10 @@ before:
     - function: "deleteResults"
   # Load & configure a couple of useful plugins
   # https://docs.art/reference/extensions
+after:
+  engine: http
+  flow:
+    - function: "clearIntervals"
 scenarios:
   - name: 'Sending messages'
     engine: http
