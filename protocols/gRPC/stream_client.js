@@ -27,6 +27,7 @@ function main() {
             console.error('Error:', error);
         } else {
             console.log('Upload status:', response.message);
+            process.exit()
         }
     });
 
