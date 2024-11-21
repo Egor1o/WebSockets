@@ -2,16 +2,12 @@
 const fs = require("fs")
 const path = require("path")
 const ss = require("socket.io-stream")
+const { deleteResults, createFileName, saveToCSV } = require("../csv")
 
 module.exports = {
   setMessage: setMessage,
   setImage: setImage,
   deleteResults,
-}
-
-function deleteResults(context, events, done) {
-  fs.rmSync(path.join(__dirname, "../results"), { recursive: true, force: true })
-  done()
 }
 
 function markEndTime(startedAt) {
@@ -32,21 +28,17 @@ function setMessage(context, events, done) {
 
 //need adjustments for different sizes. Use Artillery variables pls.
 function setImage(context, events, done) {
-  //console.log(context)
   const filePath = path.join(__dirname, context.vars.file)
   const stream = ss.createStream()
   let startedAt = process.hrtime()
   let startTime = new Date().toISOString()
 
-
-
   //this one emulates client uploading data.
   ss(context.sockets[""]).emit("upload", stream, (res) => {
-    console.log(res.message)
     const delta = markEndTime(startedAt)
     const endTime = new Date().toISOString()
     const fileName = createFileName(context.vars.file)
-    saveToCSV(fileName, "kuva", delta, startTime, endTime)
+    saveToCSV(fileName, "kuva", delta, startTime, endTime, "websocket")
     return done()
   })
   fs.createReadStream(filePath).pipe(stream)
@@ -57,33 +49,8 @@ function processSender(context, events, done, message, startedAt, startTime) {
     const delta = markEndTime(startedAt)
     let endTime = new Date().toISOString()
     //console.log(`Time taken ${delta}`);
-    saveToCSV("../results/results_chat.csv", message, delta, startTime, endTime)
     context.sockets[""].off("chat message")
+    saveToCSV("results_chat.csv", message, delta, startTime, endTime, "websocket")
     return done()
   })
-}
-
-function createFileName(file) {
-  let name = file.split("/").at(-1).split(".").at(0)
-  const fileName = `../results/results_${name}.csv`
-  return fileName
-}
-
-function saveToCSV(fileName, message, timeTaken, started, ended) {
-  const csvFilePath = path.join(__dirname, fileName)
-  const folderName = path.join(__dirname, "../results")
-
-  try {
-    if (!fs.existsSync(folderName)) {
-      fs.mkdirSync(folderName)
-    }
-  } catch (err) {
-    console.error(err)
-  }
-
-  if (!fs.existsSync(csvFilePath)) {
-    fs.writeFileSync(csvFilePath, `"message","time","started","ended"\n`)
-  }
-  const csvLine = `"${message}","${timeTaken}","${started}","${ended}"\n`
-  fs.appendFileSync(csvFilePath, csvLine, (err) => {})
 }
