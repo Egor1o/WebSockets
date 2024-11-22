@@ -1,0 +1,36 @@
+body {
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+}
+
+#grid {
+  display: grid;
+  height: 100%;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0;
+}
+
+#grid > div {
+  width: 500px;
+  height: 500px;
+  border-width: 5px;
+  border-style: solid;
+}
+
+#block_1 {
+  background-color: #4060ff;
+}
+
+#block_2 {
+  background-color: #ff8cc4;
+}
+
+#block_3 {
+  background-color: #8cff92;
+}
+
+#block_4 {
+  background-color: #f8ff96;
+}

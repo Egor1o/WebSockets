@@ -1,7 +1,7 @@
 # WebSockets
 
 This is the code for the 2024 project of the course WWW Applications.
-Our goal is to analyze the performance of different communication 
+Our goal is to analyze the performance of different communication
 protocols, with a main focus on the WebSocket protocol
 
 
@@ -66,15 +66,27 @@ npm run performance:<scenario-name>
 Ensure that gRPC serer is running. Then, navigate to `/performance/gRPC`.
 Install k6 testing library. Then, run:
 ```
-k6 run test.js 
+k6 run test.js
 ```
 
 ## Results plotting
-Make sure you have Python/Python3 and Matplotlib installed on your device, 
-and that there is data available for plotting 
-(meaning the performance tests have been run). 
+Make sure you have Python/Python3 and Matplotlib installed on your device,
+and that there is data available for plotting
+(meaning the performance tests have been run).
 Then, navigate to the `/plotters` directory and run:
 
 ```
 python3 plotter.py <protocol>
 ```
+
+## Blocks Visualization
+Navigate to the `/blocks` folder
+
+Then run:
+```
+npm install
+npm run blockserver
+```
+Open `http://localhost:8080/` in a browser.
+
+Click stuff!
