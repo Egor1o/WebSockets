@@ -23,11 +23,15 @@
       }
 
       #grid {
+        overflow:hidden;
         display: grid;
+        position: absolute;
+
         height: 100%;
+        width: 100%;
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
-        column-gap: 0;
+        column-gap: 0px;
       }
 
       .block {
@@ -66,7 +70,7 @@
       .block_title {
         height: 15%;
         width: 100%;
-        font-size: 200%;
+        font-size: 3vh;
         text-align: center;
         align-content: center;
         border-bottom-style: solid;
@@ -115,11 +119,21 @@
         width: 100%;
       }
 
+      .mean {
+        flex: 1;
+        text-align: center;
+        align-content: end;
+        font-size: 3.5vh;
+        line-height: 100%;
+        width: 100%;
+        color: #000000c3;
+      }
+
       .result_text {
         flex: 2;
         text-align: center;
         align-content: center;
-        font-size: 400%;
+        font-size: 5vh;
         line-height: 100%;
         width: 100%;
       }
@@ -127,7 +141,8 @@
       .max {
         flex: 1;
         text-align: center;
-        font-size: 200%;
+        align-content: start;
+        font-size: 3.5vh;
         line-height: 100%;
         width: 100%;
         color: #000000c3;
@@ -190,6 +205,7 @@
           <div id=test_view_1 class="test_view">
             <div class="text_overlay">
               <div class="text_overlay_top_margin"></div>
+              <div class="mean noselect"></div>
               <div class="result_text noselect">Click to Step</div>
               <div class="max noselect"></div>
               <div class="text_overlay_bottom_margin"></div>
@@ -205,6 +221,7 @@
           <div id=test_view_2 class="test_view">
             <div class="text_overlay">
               <div class="text_overlay_top_margin"></div>
+              <div class="mean noselect"></div>
               <div class="result_text noselect">Click to Step</div>
               <div class="max noselect"></div>
               <div class="text_overlay_bottom_margin"></div>
@@ -220,6 +237,7 @@
           <div id=test_view_3 class="test_view">
             <div class="text_overlay">
               <div class="text_overlay_top_margin"></div>
+              <div class="mean noselect"></div>
               <div class="result_text noselect">Click to Play/Stop</div>
               <div class="max noselect"></div>
               <div class="text_overlay_bottom_margin"></div>
@@ -235,6 +253,7 @@
           <div id=test_view_4 class="test_view">
             <div class="text_overlay">
               <div class="text_overlay_top_margin"></div>
+              <div class="mean noselect"></div>
               <div class="result_text noselect">Click to Play/Stop</div>
               <div class="max noselect"></div>
               <div class="text_overlay_bottom_margin"></div>
@@ -247,100 +266,142 @@
     </div>
   </body>
   <script defer>
+    "use strict";
     // Variables for time measurement
-    let time_1 = 0
-    let time_2 = 0
-    let time_3 = 0
-    let time_4 = 0
+    let time_1 = 0;
+    let time_2 = 0;
+    let time_3 = 0;
+    let time_4 = 0;
 
     // Variables for controlling timing results
     // WebSocket test 1
-    const ws_test_1_results_max_num = 20
+    const ws_test_1_results_max_num = 20;
     let ws_test_1_max = 0;
     let ws_test_1_results_num = 0;
+    let ws_test_1_results_sum = 0;
 
     // WebSocket test 2
-    const ws_test_2_results_max_num = 100
+    const ws_test_2_results_max_num = 100;
     let ws_test_2_max = 0;
     let ws_test_2_results_num = 0;
-    let wsTestTimeout = 50;
+    let ws_test_2_results_sum = 0;
+    let wsTestTimeout = 25;
     let ws_test_2_running = false;
 
     // HTTP test 1
-    const http_test_1_results_max_num = 20
+    const http_test_1_results_max_num = 20;
     let http_test_1_max = 0;
     let http_test_1_results_num = 0;
+    let http_test_1_results_sum = 0;
 
     // HTTP test 2
-    const http_test_2_results_max_num = 100
+    const http_test_2_results_max_num = 100;
     let http_test_2_max = 0;
     let http_test_2_results_num = 0;
-    let httpTestTimeout = 50;
+    let http_test_2_results_sum = 0;
+    let httpTestTimeout = 25;
     let http_test_2_running = false;
 
-    // Create a WebSocket
-    const socket = new WebSocket("ws://localhost:8081");
-
-    // WebSocket connection opened
-    socket.addEventListener("open", (event) => {
-      socket.send("Hello Server!");
-    });
-
-    // Listen for messages
-    socket.addEventListener("message", (event) => {
-      console.log("Server says: ", event.data);
-
-      // Reacting to WebSocket single call test response
-      if (event.data === "ws_test_response") {
-        webSocketSteppingTest();
-      }
-      else if (event.data === "ws_test_continuous_response") {
-        webSocketContinuousTest();
-        if (ws_test_2_running) {
-          setTimeout(() => {
-            startTimer(3);
-            socket.send("ws_test_continuous");
-          }, wsTestTimeout);
+    // WebSocket single call test
+    function block_1() {
+      startTimer(1);
+      const socket = new WebSocket("ws://localhost:8081");
+      socket.addEventListener("message", (event) => {
+        if (event.data === "ws_test_response") {
+          socket.close();
+          webSocketSteppingTest();
         }
+      });
+      socket.onopen = () => socket.send("ws_test");
+    }
+
+    // HTTP single call test
+    function block_2() {
+      startTimer(2);
+      httpTest('http://localhost:8080/http_test');
+    }
+
+    // WebSocket continuous test
+    function block_3() {
+      if (ws_test_2_running) {
+        ws_test_2_running = false;
+      } else {
+        ws_test_2_results_num = 0;
+        ws_test_2_max = 0;
+        ws_test_2_results_sum = 0;
+        clearBlock(3);
+        ws_test_2_running = true;
+        startTimer(3);
+        const socket = new WebSocket("ws://localhost:8081");
+        socket.addEventListener("message", (event) => {
+          if (event.data === "ws_test_continuous_response") {
+            webSocketContinuousTest();
+            if (ws_test_2_running) {
+              setTimeout(() => {
+                startTimer(3);
+                socket.send("ws_test_continuous");
+              }, wsTestTimeout);
+            } else {
+              socket.close();
+            }
+          }
+        });
+        socket.onopen = () => socket.send("ws_test_continuous");
       }
-    });
+    }
+
+    // HTTP continuous test
+    function block_4() {
+      if (http_test_2_running) {
+        http_test_2_running = false;
+      } else {
+        http_test_2_results_num = 0;
+        http_test_2_max = 0;
+        http_test_2_results_sum = 0;
+        clearBlock(4);
+        http_test_2_running = true;
+        startTimer(4);
+        httpContinuousTest('http://localhost:8080/http_test');
+      }
+    }
 
     function webSocketSteppingTest() {
       const time = window.performance.now();
       const t = stopTimer(1, time);
 
-      // Set the big text
-      document.querySelector("#block_1 .result_text").innerText = `${t} ms`;
-      console.log(t, 'ms');
-
-      // Create a bar for the timing graph
       ws_test_1_results_num++;
-      let i = ws_test_1_results_num % ws_test_1_results_max_num;
+      const i = ws_test_1_results_num % ws_test_1_results_max_num;
 
+      // Maybe remove one old result
       if (ws_test_1_results_num > ws_test_1_results_max_num) {
-        let r = document.getElementById(`block_1_bar_${i}`);
+        const r = document.getElementById(`block_1_bar_${i}`);
         r.remove();
       }
 
+      // Create a bar for the timing graph
       let e = document.createElement("div");
-      e.setAttribute("id", `block_1_bar_${i}`)
+      e.setAttribute("id", `block_1_bar_${i}`);
       e.classList.add("bar");
       ws_test_1_max = Math.max(t, ws_test_1_max);
       e.style.height = `${100 * t / ws_test_1_max}%`;
-      const m = document.querySelector("#block_1 .sub_block .test_view .text_overlay .max");
-      m.innerText = `max: ${ws_test_1_max} ms`;
       document.getElementById("block_1_bar_container").appendChild(e);
+
+      // Set result
+      document.querySelector("#block_1 .result_text").innerText = `${t} ms`;
+
+      // Set max value
+      document.querySelector("#block_1 .max").innerText = `max: ${ws_test_1_max} ms`;
+
+      // Set mean value
+      ws_test_1_results_sum += t
+      const mean = ws_test_1_results_sum / ws_test_1_results_num;
+      document.querySelector("#block_1 .mean").innerText = `mean: ${decimalRound(mean)}`;
     }
 
     function webSocketContinuousTest() {
       const time = window.performance.now();
       const t = stopTimer(3, time);
 
-      // Set the big text
-      document.querySelector("#block_3 .result_text").innerText = `${t} ms`;
-      console.log(t, 'ms');
-
-      // Create a bar for the timing graph
       ws_test_2_results_num++;
       let i = ws_test_2_results_num % ws_test_2_results_max_num;
 
@@ -349,14 +410,25 @@
         r.remove();
       }
 
+      // Create a bar for the timing graph
       let e = document.createElement("div");
-      e.setAttribute("id", `block_3_bar_${i}`)
+      e.setAttribute("id", `block_3_bar_${i}`);
       e.classList.add("bar");
       ws_test_2_max = Math.max(t, ws_test_2_max);
       e.style.height = `${100 * t / ws_test_2_max}%`;
-      const m = document.querySelector("#block_3 .sub_block .test_view .text_overlay .max");
-      m.innerText = `max: ${ws_test_2_max} ms`;
       document.getElementById("block_3_bar_container").appendChild(e);
+
+      // Set the result
+      document.querySelector("#block_3 .result_text").innerText = `${t} ms`;
+
+      // Set max value
+      document.querySelector("#block_3 .max").innerText = `max: ${ws_test_2_max} ms`;
+
+      // Set mean value
+      ws_test_2_results_sum += t
+      const mean = ws_test_2_results_sum / ws_test_2_results_num;
+      document.querySelector("#block_3 .mean").innerText = `mean: ${decimalRound(mean)}`;
+
     }
 
     // HTTP single call test
@@ -372,11 +444,6 @@
             return;
           }
 
-          document.querySelector("#block_2 .result_text").innerText = `${t} ms`;
-          console.log("Server says: ", text)
-          console.log(t, 'ms');
-
-          // Create a bar for the timing graph
           http_test_1_results_num++;
           let i = http_test_1_results_num % http_test_1_results_max_num;
 
@@ -384,14 +451,25 @@
             let r = document.getElementById(`block_2_bar_${i}`);
             r.remove();
           }
+
+          // Create a bar for the timing graph
           let e = document.createElement("div");
-          e.setAttribute("id", `block_2_bar_${i}`)
+          e.setAttribute("id", `block_2_bar_${i}`);
           e.classList.add("bar");
           http_test_1_max = Math.max(t, http_test_1_max);
           e.style.height = `${100 * t / http_test_1_max}%`;
-          const m = document.querySelector("#block_2 .sub_block .test_view .text_overlay .max");
-          m.innerText = `max: ${http_test_1_max} ms`;
           document.getElementById("block_2_bar_container").appendChild(e);
+
+          // Set result
+          document.querySelector("#block_2 .result_text").innerText = `${t} ms`;
+
+          // Set max value
+          document.querySelector("#block_2 .max").innerText = `max: ${http_test_1_max} ms`;
+
+          // Set mean value
+          http_test_1_results_sum += t
+          const mean = http_test_1_results_sum / http_test_1_results_num;
+          document.querySelector("#block_2 .mean").innerText = `mean: ${decimalRound(mean)}`;
         });
     }
 
@@ -402,11 +480,7 @@
       .then((text) => {
           const time = window.performance.now();
           const t = stopTimer(4, time);
-          document.querySelector("#block_4 .result_text").innerText = `${t} ms`;
-          console.log("Server says: ", text)
-          console.log(t, 'ms');
 
-          // Create a bar for the timing graph
           http_test_2_results_num++;
           let i = http_test_2_results_num % http_test_2_results_max_num;
 
@@ -415,14 +489,24 @@
             r.remove();
           }
 
+          // Create a bar for the timing graph
           let e = document.createElement("div");
-          e.setAttribute("id", `block_4_bar_${i}`)
+          e.setAttribute("id", `block_4_bar_${i}`);
           e.classList.add("bar");
           http_test_2_max = Math.max(t, http_test_2_max);
           e.style.height = `${100 * t / http_test_2_max}%`;
-          const m = document.querySelector("#block_4 .sub_block .test_view .text_overlay .max");
-          m.innerText = `max: ${http_test_2_max} ms`;
           document.getElementById("block_4_bar_container").appendChild(e);
+
+          // Set result
+          document.querySelector("#block_4 .result_text").innerText = `${t} ms`;
+
+          // Set max value
+          document.querySelector("#block_4 .max").innerText = `max: ${http_test_2_max} ms`;
+
+          // Set mean value
+          http_test_2_results_sum += t
+          const mean = http_test_2_results_sum / http_test_2_results_num;
+          document.querySelector("#block_4 .mean").innerText = `mean: ${decimalRound(mean)}`;
         }).then(() => {
           if (http_test_2_running) {
             setTimeout(() => {
@@ -431,43 +515,6 @@
             }, httpTestTimeout);
           }
         });
-    }
-
-    // Reactions to clicking on blocks
-
-    // WebSocket single call test
-    function block_1() {
-      startTimer(1)
-      socket.send("ws_test");
-    }
-
-    // HTTP single call test
-    function block_2() {
-      startTimer(2)
-      httpTest('http://localhost:8080/http_test')
-    }
-
-    // WebSocket continuous test
-    function block_3() {
-      if (!ws_test_2_running) {
-        ws_test_2_running = true;
-        startTimer(3)
-        socket.send("ws_test_continuous");
-      } else {
-        ws_test_2_running = false;
-      }
-    }
-
-    // HTTP continuous test
-    function block_4() {
-      if (!http_test_2_running) {
-        http_test_2_running = true;
-        startTimer(4)
-        httpContinuousTest('http://localhost:8080/http_test')
-      } else {
-        http_test_2_running = false;
-      }
-
     }
 
     // Timer functions
@@ -496,7 +543,13 @@
     }
 
     function decimalRound(num) {
-      return Math.round((num + Number.EPSILON) * 100) / 100
+      return Math.round((num + Number.EPSILON) * 100) / 100;
+    }
+
+    function clearBlock(num) {
+      document.querySelector(`#block_${num} .result_text`).innerText = "";
+      document.querySelector(`#block_${num} .max`).innerText = "";
+      document.getElementById(`block_${num}_bar_container`).replaceChildren();
     }
 
   </script>
