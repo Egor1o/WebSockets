@@ -303,10 +303,11 @@
 
     // Variables for controlling timing results
     // WebSocket test 1
-    const ws_test_1_results_max_num = 20;
+    const ws_test_1_results_max_num = 30;
     let ws_test_1_max = 0;
     let ws_test_1_results_num = 0;
     let ws_test_1_results_sum = 0;
+    const ws_test_1_results = new Array(ws_test_1_results_max_num).fill(0);
 
     // WebSocket test 2
     const ws_test_2_results_max_num = 50;
@@ -315,12 +316,14 @@
     let ws_test_2_results_sum = 0;
     let wsTestTimeout = 25;
     let ws_test_2_running = false;
+    const ws_test_2_results = new Array(ws_test_2_results_max_num).fill(0);
 
     // HTTP test 1
-    const http_test_1_results_max_num = 20;
+    const http_test_1_results_max_num = 30;
     let http_test_1_max = 0;
     let http_test_1_results_num = 0;
     let http_test_1_results_sum = 0;
+    const http_test_1_results = new Array(http_test_1_results_max_num).fill(0);
 
     // HTTP test 2
     const http_test_2_results_max_num = 50;
@@ -329,6 +332,7 @@
     let http_test_2_results_sum = 0;
     let httpTestTimeout = 25;
     let http_test_2_running = false;
+    const http_test_2_results = new Array(http_test_2_results_max_num).fill(0);
 
     // WebSocket single call test
     function block_1() {
@@ -399,6 +403,7 @@
 
       ws_test_1_results_num++;
       const i = ws_test_1_results_num % ws_test_1_results_max_num;
+      //ws_test_1_results[i-1] = t;
 
       // Maybe remove one old result
       if (ws_test_1_results_num > ws_test_1_results_max_num) {
@@ -406,12 +411,50 @@
         r.remove();
       }
 
+      // Scale results if the new one is greater than previous max
+      if (t > ws_test_1_max) {
+        if (ws_test_1_max === 0) {
+          ws_test_1_max = t;
+        } else {
+          let ws_ratio = ws_test_1_max / t;
+          let http_ratio = http_test_1_max / t;
+          let ratio = 0;
+          if (http_ratio === 0) {
+            ratio = ws_ratio;
+          } else {
+            ratio = Math.min(ws_ratio, http_ratio)
+          }
+          ws_test_1_max = t;
+
+          if (t > http_test_1_max) {
+            let bars = document.getElementById("block_1_bar_container").children;
+
+            for (let bar of bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+
+            let other_bars = document.getElementById("block_2_bar_container").children;
+
+            for (let bar of other_bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+          }
+        }
+      }
+
       // Create a bar for the timing graph
       let e = document.createElement("div");
       e.setAttribute("id", `block_1_bar_${i}`);
       e.classList.add("bar");
-      ws_test_1_max = Math.max(t, ws_test_1_max);
-      e.style.height = `${100 * t / Math.max(ws_test_1_max, http_test_1_max)}%`;
+
+      let divisor = t;
+      if (ws_test_1_max !== 0 || http_test_1_max !== 0) {
+        divisor = Math.max(ws_test_1_max, http_test_1_max);
+      }
+
+      e.style.height = `${100 * t / divisor}%`;
       document.getElementById("block_1_bar_container").appendChild(e);
 
       // Set result
@@ -436,17 +479,56 @@
       ws_test_2_results_num++;
       let i = ws_test_2_results_num % ws_test_2_results_max_num;
 
+      // Maybe remove one old result
       if (ws_test_2_results_num > ws_test_2_results_max_num) {
         let r = document.getElementById(`block_3_bar_${i}`);
         r.remove();
+      }
+
+      // Scale old bars if the new result is greater than previous max
+      if (t > ws_test_2_max) {
+        if (ws_test_2_max === 0) {
+          ws_test_2_max = t;
+        } else {
+          let ws_ratio = ws_test_2_max / t;
+          let http_ratio = http_test_2_max / t;
+          let ratio = 0;
+          if (http_ratio === 0) {
+            ratio = ws_ratio;
+          } else {
+            ratio = Math.min(ws_ratio, http_ratio)
+          }
+          ws_test_2_max = t;
+
+          if (t > http_test_2_max) {
+            let bars = document.getElementById("block_3_bar_container").children;
+
+            for (let bar of bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+
+            let other_bars = document.getElementById("block_4_bar_container").children;
+
+            for (let bar of other_bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+          }
+        }
       }
 
       // Create a bar for the timing graph
       let e = document.createElement("div");
       e.setAttribute("id", `block_3_bar_${i}`);
       e.classList.add("bar");
-      ws_test_2_max = Math.max(t, ws_test_2_max);
-      e.style.height = `${100 * t / Math.max(ws_test_2_max, http_test_2_max)}%`;
+
+      let divisor = t;
+      if (ws_test_2_max !== 0 || http_test_2_max !== 0) {
+        divisor = Math.max(ws_test_2_max, http_test_2_max);
+      }
+
+      e.style.height = `${100 * t / divisor}%`;
       document.getElementById("block_3_bar_container").appendChild(e);
 
       // Set the result
@@ -483,12 +565,50 @@
             r.remove();
           }
 
+          // Scale old bars if the new result is greater than previous max
+          if (t > http_test_1_max) {
+            if (http_test_1_max === 0) {
+              http_test_1_max = t;
+            } else {
+              let http_ratio = http_test_1_max / t;
+              let ws_ratio = ws_test_1_max / t;
+              let ratio = 0;
+              if (ws_ratio === 0) {
+                ratio = http_ratio;
+              } else {
+                ratio = Math.min(ws_ratio, http_ratio)
+              }
+              http_test_1_max = t;
+
+              if (t > ws_test_1_max) {
+                let bars = document.getElementById("block_2_bar_container").children;
+
+                for (let bar of bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+
+                let other_bars = document.getElementById("block_1_bar_container").children;
+
+                for (let bar of other_bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+              }
+            }
+          }
+
           // Create a bar for the timing graph
           let e = document.createElement("div");
           e.setAttribute("id", `block_2_bar_${i}`);
           e.classList.add("bar");
-          http_test_1_max = Math.max(t, http_test_1_max);
-          e.style.height = `${100 * t / Math.max(ws_test_1_max, http_test_1_max)}%`;
+
+          let divisor = t;
+          if (ws_test_1_max !== 0 || http_test_1_max !== 0) {
+            divisor = Math.max(ws_test_1_max, http_test_1_max);
+          }
+
+          e.style.height = `${100 * t / divisor}%`;
           document.getElementById("block_2_bar_container").appendChild(e);
 
           // Set result
@@ -520,12 +640,49 @@
             r.remove();
           }
 
+          // Scale old bars if the new result is greater than previous max
+          if (t > http_test_2_max) {
+            if (http_test_2_max === 0) {
+              http_test_2_max = t;
+            } else {
+              let http_ratio = http_test_2_max / t;
+              let ws_ratio = ws_test_2_max / t;
+              let ratio = 0;
+              if (ws_ratio === 0) {
+                ratio = http_ratio;
+              } else {
+                ratio = Math.min(ws_ratio, http_ratio)
+              }
+              http_test_2_max = t;
+              if (t > ws_test_2_max) {
+                let bars = document.getElementById("block_4_bar_container").children;
+
+                for (let bar of bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+
+                let other_bars = document.getElementById("block_3_bar_container").children;
+
+                for (let bar of other_bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+              }
+            }
+          }
+
           // Create a bar for the timing graph
           let e = document.createElement("div");
           e.setAttribute("id", `block_4_bar_${i}`);
           e.classList.add("bar");
-          http_test_2_max = Math.max(t, http_test_2_max);
-          e.style.height = `${100 * t / Math.max(ws_test_2_max, http_test_2_max)}%`;
+
+          let divisor = t;
+          if (ws_test_2_max !== 0 || http_test_2_max !== 0) {
+            divisor = Math.max(ws_test_2_max, http_test_2_max);
+          }
+
+          e.style.height = `${100 * t / divisor}%`;
           document.getElementById("block_4_bar_container").appendChild(e);
 
           // Set result
