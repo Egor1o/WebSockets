@@ -68,7 +68,7 @@
       .block_title {
         height: 15%;
         width: 100%;
-        font-size: 2.5vh;
+        font-size: min(2.5vh, 2.5vw);
         text-align: center;
         align-content: center;
         border-bottom-style: solid;
@@ -89,7 +89,7 @@
       }
 
       #block_4_title {
-        background-color: #fcffb3;
+        background-color: #f7ff7d;
       }
 
       .test_view {
@@ -121,7 +121,7 @@
         flex: 1;
         text-align: center;
         align-content: end;
-        font-size: 3vh;
+        font-size: min(3vh, 3vw);;
         line-height: 100%;
         width: 100%;
         color: #000000c3;
@@ -166,15 +166,12 @@
         margin-bottom: 0;
         margin-left: 1px;
         margin-right: 1px;
-        border-top-width: 2px;
-        border-left-width: 2px;
-        border-right-width: 2px;
-        border-bottom-width: 0;
+        border-width: 5px 0 0 0;
         z-index: 10;
       }
 
       #block_1_bar_container > .bar {
-        background-color: #1c62b770;
+        background-color: #1c62b757;
         border-style: solid;
         border-color: #586193b9;
       }
@@ -186,19 +183,19 @@
       }
 
       #block_3_bar_container > .bar {
-        background-color: #5e873299;
+        background-color: #5e873266;
         border-style: solid;
         border-color: #368c00a6;
       }
 
       #block_4_bar_container > .bar {
-        background-color: #fff23dad;
+        background-color: #ffee00af;
         border-style: solid;
-        border-color: #e9c422a6;
+        border-color: #d4b320c6;
       }
 
       .black_bottom_bar {
-        height: 0.2vh;
+        height: 0.4vh;
         width: 100%;
         background-color: black;
         margin-bottom: 0;
@@ -312,7 +309,7 @@
     let ws_test_1_results_sum = 0;
 
     // WebSocket test 2
-    const ws_test_2_results_max_num = 100;
+    const ws_test_2_results_max_num = 50;
     let ws_test_2_max = 0;
     let ws_test_2_results_num = 0;
     let ws_test_2_results_sum = 0;
@@ -326,7 +323,7 @@
     let http_test_1_results_sum = 0;
 
     // HTTP test 2
-    const http_test_2_results_max_num = 100;
+    const http_test_2_results_max_num = 50;
     let http_test_2_max = 0;
     let http_test_2_results_num = 0;
     let http_test_2_results_sum = 0;
@@ -420,7 +417,7 @@
       // Set result
       //document.querySelector("#block_1 .result_text").style.setProperty("background-color", "rgba(255, 255, 255, 0.5)");
       //document.querySelector("#block_1 .result_text").style.setProperty("box-shadow", "0 0 5px 5px rgba(255, 255, 255, 0.5)");
-      d//ocument.querySelector("#block_1 .result_text").style.setProperty("border-radius", "0.5em");
+      //document.querySelector("#block_1 .result_text").style.setProperty("border-radius", "0.5em");
       document.querySelector("#block_1 .result_text").innerText = `${t} ms`;
 
       // Set max value
