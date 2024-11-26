@@ -21,6 +21,15 @@ async function main() {
   });
 
   io.on("connection", async (socket) => {
+    if (socket.recovered) {      
+      try {
+        const messages = await sql`SELECT id, content FROM messages WHERE id > ${socket.handshake.auth.serverOffset || 0}`;
+        messages.forEach((row) => {          
+          socket.emit("chat message", row.content, row.id);
+        });
+      } catch (e) {
+      }
+    }
 
     //u can use this one to check any upcoming event that is unhandled
     /*socket.onAny((eventName, ...args) => {
@@ -29,15 +38,7 @@ async function main() {
 
     socket.on("chat message", async (msg, clientOffset) => {
       io.emit("chat message", msg);
-      if (!socket.recovered) {
-        try {
-          const messages = await sql`SELECT id, content FROM messages WHERE id > ${socket.handshake.auth.serverOffset || 0}`;
-          messages.forEach((row) => {
-            socket.emit("chat message", row.content, row.id);
-          });
-        } catch (e) {
-        }
-      }
+      await sql`INSERT INTO messages (content, client_offset) VALUES (${msg}, ${clientOffset})`    
     });
 
     ss(socket).on('upload', (stream, callback) =>  {
