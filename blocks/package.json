@@ -1,0 +1,16 @@
+{
+    "name": "blocks",
+    "version": "0.0.1",
+    "description": "",
+    "main": "blocks.js",
+    "scripts": {
+        "blockserver": "node blocks.js"
+    },
+    "author": "",
+    "license": "",
+    "type": "module",
+    "dependencies": {
+        "express": "^4.21.1",
+        "ws": "8.18.0"
+    }
+}

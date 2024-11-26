@@ -1,0 +1,744 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Websocket Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      .noselect {
+        -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none; /* Safari */
+          -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+              -ms-user-select: none; /* Internet Explorer/Edge */
+                  user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome, Edge, Opera and Firefox */
+      }
+
+      body {
+        box-sizing: border-box;
+        margin: 0;
+        border-width: 1vh;
+        background-color: black;
+      }
+
+      #grid {
+        overflow:hidden;
+        display: grid;
+        position: absolute;
+
+        height: 100%;
+        width: 100%;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 0px;
+      }
+
+      .block {
+        position: relative;
+        width: 50vw;
+        height: 50vh;
+        border-width: 0.3vh;
+        font-family: Verdana, Arial;
+        display: flex;
+        position: relative;
+        flex-direction: column;
+      }
+
+      #block_1 {
+        background-color: #b2d2ff;
+        border-style: none solid solid none;
+      }
+
+      #block_2 {
+        background-color: #fdafd5;
+        border-style: none none solid solid;
+      }
+
+      #block_3 {
+        background-color: #adffb1;
+        border-style: solid solid none none;
+      }
+
+      #block_4 {
+        background-color: #f8ff97;
+        border-style: solid none none solid;
+      }
+
+      .block_title {
+        height: 15%;
+        width: 100%;
+        font-size: min(2.5vh, 2.5vw);
+        text-align: center;
+        align-content: center;
+        border-bottom-style: solid;
+        border-bottom-width: 3px;
+        border-color: #1b1b1be5;
+      }
+
+      #block_1_title {
+        background-color: #7997cf;
+      }
+
+      #block_2_title {
+        background-color: #f45ba5d2;
+      }
+
+      #block_3_title {
+        background-color: #6dceafb4;
+      }
+
+      #block_4_title {
+        background-color: #f7ff7d;
+      }
+
+      .test_view {
+        position: relative;
+        height: 85%;
+        width: 100%;
+      }
+
+      .text_overlay {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        z-index: 15;
+      }
+
+      .text_overlay_top_margin {
+        flex: 1;
+        width: 100%;
+      }
+
+      .text_overlay_bottom_margin {
+        flex: 1;
+        width: 100%;
+      }
+
+      .mean {
+        flex: 1;
+        text-align: center;
+        align-content: end;
+        font-size: min(3vh, 3vw);;
+        line-height: 100%;
+        width: 100%;
+        color: #000000c3;
+      }
+
+      .result_background {
+        flex: 2;
+        text-align: center;
+        align-content: center;
+        width: 100%;
+      }
+
+      .result_text {
+        font-size: 4.5vh;
+        line-height: 100%;
+      }
+
+      .max {
+        flex: 1;
+        text-align: center;
+        align-content: start;
+        font-size: 3vh;
+        line-height: 100%;
+        width: 100%;
+        color: #000000c3;
+      }
+
+      .block_bar_container {
+        flex: auto;
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+        padding-top: 0.5vh;
+      }
+
+      .bar {
+        flex:auto;
+        padding: 0;
+        margin-top: auto;
+        margin-bottom: 0;
+        margin-left: 1px;
+        margin-right: 1px;
+        border-width: 5px 0 0 0;
+        z-index: 10;
+      }
+
+      #block_1_bar_container > .bar {
+        background-color: #1c62b757;
+        border-style: solid;
+        border-color: #586193b9;
+      }
+
+      #block_2_bar_container > .bar {
+        background-color: #ff8799dc;
+        border-style: solid;
+        border-color: #950000a7;
+      }
+
+      #block_3_bar_container > .bar {
+        background-color: #5e873266;
+        border-style: solid;
+        border-color: #368c00a6;
+      }
+
+      #block_4_bar_container > .bar {
+        background-color: #ffee00af;
+        border-style: solid;
+        border-color: #d4b320c6;
+      }
+
+      .black_bottom_bar {
+        height: 0.4vh;
+        width: 100%;
+        background-color: black;
+        margin-bottom: 0;
+        z-index: 20;
+      }
+
+      .bar_container_container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="grid">
+
+      <div id="block_1" class="block" onClick="block_1()">
+        <div id="block_1_title" class="block_title noselect">WebSocket Test 1: Singular Calls</div>
+        <div id=test_view_1 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Step</span>
+            </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
+            <div id="block_1_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="block_2" class="block" onClick="block_2()">
+        <div id="block_2_title" class="block_title noselect">HTTP Test 1: Singular Calls</div>
+        <div id=test_view_2 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Step</span>
+            </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
+            <div id="block_2_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="block_3" class="block" onClick="block_3()">
+        <div id="block_3_title" class="block_title noselect">WebSocket Test 2: Continuous Calls</div>
+        <div id=test_view_3 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Play/Stop</span>
+            </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
+            <div id="block_3_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="block_4" class="block" onClick="block_4()">
+        <div id="block_4_title" class="block_title noselect">HTTP Test 2: Continuous Calls</div>
+        <div id=test_view_4 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Play/Stop</span>
+            </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
+            <div id="block_4_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </body>
+  <script defer>
+    "use strict";
+    // Variables for time measurement
+    let time_1 = 0;
+    let time_2 = 0;
+    let time_3 = 0;
+    let time_4 = 0;
+
+    // Variables for controlling timing results
+    // WebSocket test 1
+    const ws_test_1_results_max_num = 30;
+    let ws_test_1_max = 0;
+    let ws_test_1_results_num = 0;
+    let ws_test_1_results_sum = 0;
+    const ws_test_1_results = new Array(ws_test_1_results_max_num).fill(0);
+
+    // WebSocket test 2
+    const ws_test_2_results_max_num = 50;
+    let ws_test_2_max = 0;
+    let ws_test_2_results_num = 0;
+    let ws_test_2_results_sum = 0;
+    let wsTestTimeout = 25;
+    let ws_test_2_running = false;
+    const ws_test_2_results = new Array(ws_test_2_results_max_num).fill(0);
+
+    // HTTP test 1
+    const http_test_1_results_max_num = 30;
+    let http_test_1_max = 0;
+    let http_test_1_results_num = 0;
+    let http_test_1_results_sum = 0;
+    const http_test_1_results = new Array(http_test_1_results_max_num).fill(0);
+
+    // HTTP test 2
+    const http_test_2_results_max_num = 50;
+    let http_test_2_max = 0;
+    let http_test_2_results_num = 0;
+    let http_test_2_results_sum = 0;
+    let httpTestTimeout = 25;
+    let http_test_2_running = false;
+    const http_test_2_results = new Array(http_test_2_results_max_num).fill(0);
+
+    // WebSocket single call test
+    function block_1() {
+      startTimer(1);
+      const socket = new WebSocket("ws://localhost:8081");
+      socket.addEventListener("message", (event) => {
+        if (event.data === "ws_test_response") {
+          socket.close();
+          webSocketSteppingTest();
+        }
+      });
+      socket.onopen = () => socket.send("ws_test");
+    }
+
+    // HTTP single call test
+    function block_2() {
+      startTimer(2);
+      httpTest('http://localhost:8080/http_test');
+    }
+
+    // WebSocket continuous test
+    function block_3() {
+      if (ws_test_2_running) {
+        ws_test_2_running = false;
+      } else {
+        ws_test_2_results_num = 0;
+        ws_test_2_max = 0;
+        ws_test_2_results_sum = 0;
+        clearBlock(3);
+        ws_test_2_running = true;
+        startTimer(3);
+        const socket = new WebSocket("ws://localhost:8081");
+        socket.addEventListener("message", (event) => {
+          if (event.data === "ws_test_continuous_response") {
+            webSocketContinuousTest();
+            if (ws_test_2_running) {
+              setTimeout(() => {
+                startTimer(3);
+                socket.send("ws_test_continuous");
+              }, wsTestTimeout);
+            } else {
+              socket.close();
+            }
+          }
+        });
+        socket.onopen = () => socket.send("ws_test_continuous");
+      }
+    }
+
+    // HTTP continuous test
+    function block_4() {
+      if (http_test_2_running) {
+        http_test_2_running = false;
+      } else {
+        http_test_2_results_num = 0;
+        http_test_2_max = 0;
+        http_test_2_results_sum = 0;
+        clearBlock(4);
+        http_test_2_running = true;
+        startTimer(4);
+        httpContinuousTest('http://localhost:8080/http_test');
+      }
+    }
+
+    function webSocketSteppingTest() {
+      const time = window.performance.now();
+      const t = stopTimer(1, time);
+
+      ws_test_1_results_num++;
+      const i = ws_test_1_results_num % ws_test_1_results_max_num;
+      //ws_test_1_results[i-1] = t;
+
+      // Maybe remove one old result
+      if (ws_test_1_results_num > ws_test_1_results_max_num) {
+        const r = document.getElementById(`block_1_bar_${i}`);
+        r.remove();
+      }
+
+      // Scale results if the new one is greater than previous max
+      if (t > ws_test_1_max) {
+        if (ws_test_1_max === 0) {
+          ws_test_1_max = t;
+        } else {
+          let ws_ratio = ws_test_1_max / t;
+          let http_ratio = http_test_1_max / t;
+          let ratio = 0;
+          if (http_ratio === 0) {
+            ratio = ws_ratio;
+          } else {
+            ratio = Math.min(ws_ratio, http_ratio)
+          }
+          ws_test_1_max = t;
+
+          if (t > http_test_1_max) {
+            let bars = document.getElementById("block_1_bar_container").children;
+
+            for (let bar of bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+
+            let other_bars = document.getElementById("block_2_bar_container").children;
+
+            for (let bar of other_bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+          }
+        }
+      }
+
+      // Create a bar for the timing graph
+      let e = document.createElement("div");
+      e.setAttribute("id", `block_1_bar_${i}`);
+      e.classList.add("bar");
+
+      let divisor = t;
+      if (ws_test_1_max !== 0 || http_test_1_max !== 0) {
+        divisor = Math.max(ws_test_1_max, http_test_1_max);
+      }
+
+      e.style.height = `${100 * t / divisor}%`;
+      document.getElementById("block_1_bar_container").appendChild(e);
+
+      // Set result
+      //document.querySelector("#block_1 .result_text").style.setProperty("background-color", "rgba(255, 255, 255, 0.5)");
+      //document.querySelector("#block_1 .result_text").style.setProperty("box-shadow", "0 0 5px 5px rgba(255, 255, 255, 0.5)");
+      //document.querySelector("#block_1 .result_text").style.setProperty("border-radius", "0.5em");
+      document.querySelector("#block_1 .result_text").innerText = `${t} ms`;
+
+      // Set max value
+      document.querySelector("#block_1 .max").innerText = `max: ${ws_test_1_max} ms`;
+
+      // Set mean value
+      ws_test_1_results_sum += t
+      const mean = ws_test_1_results_sum / ws_test_1_results_num;
+      document.querySelector("#block_1 .mean").innerText = `mean: ${decimalRound(mean)}`;
+    }
+
+    function webSocketContinuousTest() {
+      const time = window.performance.now();
+      const t = stopTimer(3, time);
+
+      ws_test_2_results_num++;
+      let i = ws_test_2_results_num % ws_test_2_results_max_num;
+
+      // Maybe remove one old result
+      if (ws_test_2_results_num > ws_test_2_results_max_num) {
+        let r = document.getElementById(`block_3_bar_${i}`);
+        r.remove();
+      }
+
+      // Scale old bars if the new result is greater than previous max
+      if (t > ws_test_2_max) {
+        if (ws_test_2_max === 0) {
+          ws_test_2_max = t;
+        } else {
+          let ws_ratio = ws_test_2_max / t;
+          let http_ratio = http_test_2_max / t;
+          let ratio = 0;
+          if (http_ratio === 0) {
+            ratio = ws_ratio;
+          } else {
+            ratio = Math.min(ws_ratio, http_ratio)
+          }
+          ws_test_2_max = t;
+
+          if (t > http_test_2_max) {
+            let bars = document.getElementById("block_3_bar_container").children;
+
+            for (let bar of bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+
+            let other_bars = document.getElementById("block_4_bar_container").children;
+
+            for (let bar of other_bars) {
+              let h = parseInt(bar.style.height, 10);
+              bar.style.setProperty("height", `${h * ratio}%`);
+            }
+          }
+        }
+      }
+
+      // Create a bar for the timing graph
+      let e = document.createElement("div");
+      e.setAttribute("id", `block_3_bar_${i}`);
+      e.classList.add("bar");
+
+      let divisor = t;
+      if (ws_test_2_max !== 0 || http_test_2_max !== 0) {
+        divisor = Math.max(ws_test_2_max, http_test_2_max);
+      }
+
+      e.style.height = `${100 * t / divisor}%`;
+      document.getElementById("block_3_bar_container").appendChild(e);
+
+      // Set the result
+      document.querySelector("#block_3 .result_text").innerText = `${t} ms`;
+
+      // Set max value
+      document.querySelector("#block_3 .max").innerText = `max: ${ws_test_2_max} ms`;
+
+      // Set mean value
+      ws_test_2_results_sum += t
+      const mean = ws_test_2_results_sum / ws_test_2_results_num;
+      document.querySelector("#block_3 .mean").innerText = `mean: ${decimalRound(mean)}`;
+
+    }
+
+    // HTTP single call test
+    async function httpTest (url) {
+      fetch(url)
+        .then((response) => response.text())
+        .then((text) => {
+          const time = window.performance.now();
+          const t = stopTimer(2, time);
+
+          if (text !== "http_test_response") {
+            console.error("HTTP Test 1 Error: Wrong message");
+            return;
+          }
+
+          http_test_1_results_num++;
+          let i = http_test_1_results_num % http_test_1_results_max_num;
+
+          if (http_test_1_results_num > http_test_1_results_max_num) {
+            let r = document.getElementById(`block_2_bar_${i}`);
+            r.remove();
+          }
+
+          // Scale old bars if the new result is greater than previous max
+          if (t > http_test_1_max) {
+            if (http_test_1_max === 0) {
+              http_test_1_max = t;
+            } else {
+              let http_ratio = http_test_1_max / t;
+              let ws_ratio = ws_test_1_max / t;
+              let ratio = 0;
+              if (ws_ratio === 0) {
+                ratio = http_ratio;
+              } else {
+                ratio = Math.min(ws_ratio, http_ratio)
+              }
+              http_test_1_max = t;
+
+              if (t > ws_test_1_max) {
+                let bars = document.getElementById("block_2_bar_container").children;
+
+                for (let bar of bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+
+                let other_bars = document.getElementById("block_1_bar_container").children;
+
+                for (let bar of other_bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+              }
+            }
+          }
+
+          // Create a bar for the timing graph
+          let e = document.createElement("div");
+          e.setAttribute("id", `block_2_bar_${i}`);
+          e.classList.add("bar");
+
+          let divisor = t;
+          if (ws_test_1_max !== 0 || http_test_1_max !== 0) {
+            divisor = Math.max(ws_test_1_max, http_test_1_max);
+          }
+
+          e.style.height = `${100 * t / divisor}%`;
+          document.getElementById("block_2_bar_container").appendChild(e);
+
+          // Set result
+          document.querySelector("#block_2 .result_text").innerText = `${t} ms`;
+
+          // Set max value
+          document.querySelector("#block_2 .max").innerText = `max: ${http_test_1_max} ms`;
+
+          // Set mean value
+          http_test_1_results_sum += t
+          const mean = http_test_1_results_sum / http_test_1_results_num;
+          document.querySelector("#block_2 .mean").innerText = `mean: ${decimalRound(mean)}`;
+        });
+    }
+
+    // HTTP continuous calls test
+    async function httpContinuousTest (url) {
+      fetch(url)
+      .then((response) => response.text())
+      .then((text) => {
+          const time = window.performance.now();
+          const t = stopTimer(4, time);
+
+          http_test_2_results_num++;
+          let i = http_test_2_results_num % http_test_2_results_max_num;
+
+          if (http_test_2_results_num > http_test_2_results_max_num) {
+            let r = document.getElementById(`block_4_bar_${i}`);
+            r.remove();
+          }
+
+          // Scale old bars if the new result is greater than previous max
+          if (t > http_test_2_max) {
+            if (http_test_2_max === 0) {
+              http_test_2_max = t;
+            } else {
+              let http_ratio = http_test_2_max / t;
+              let ws_ratio = ws_test_2_max / t;
+              let ratio = 0;
+              if (ws_ratio === 0) {
+                ratio = http_ratio;
+              } else {
+                ratio = Math.min(ws_ratio, http_ratio)
+              }
+              http_test_2_max = t;
+              if (t > ws_test_2_max) {
+                let bars = document.getElementById("block_4_bar_container").children;
+
+                for (let bar of bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+
+                let other_bars = document.getElementById("block_3_bar_container").children;
+
+                for (let bar of other_bars) {
+                  let h = parseInt(bar.style.height, 10);
+                  bar.style.setProperty("height", `${h * ratio}%`);
+                }
+              }
+            }
+          }
+
+          // Create a bar for the timing graph
+          let e = document.createElement("div");
+          e.setAttribute("id", `block_4_bar_${i}`);
+          e.classList.add("bar");
+
+          let divisor = t;
+          if (ws_test_2_max !== 0 || http_test_2_max !== 0) {
+            divisor = Math.max(ws_test_2_max, http_test_2_max);
+          }
+
+          e.style.height = `${100 * t / divisor}%`;
+          document.getElementById("block_4_bar_container").appendChild(e);
+
+          // Set result
+          document.querySelector("#block_4 .result_text").innerText = `${t} ms`;
+
+          // Set max value
+          document.querySelector("#block_4 .max").innerText = `max: ${http_test_2_max} ms`;
+
+          // Set mean value
+          http_test_2_results_sum += t
+          const mean = http_test_2_results_sum / http_test_2_results_num;
+          document.querySelector("#block_4 .mean").innerText = `mean: ${decimalRound(mean)}`;
+        }).then(() => {
+          if (http_test_2_running) {
+            setTimeout(() => {
+              startTimer(4);
+              httpContinuousTest(url);
+            }, httpTestTimeout);
+          }
+        });
+    }
+
+    // Timer functions
+    function startTimer(num) {
+      if (num === 1) {
+        time_1 = window.performance.now();
+      } else if (num === 2) {
+        time_2 = window.performance.now();
+      } else if (num === 3) {
+        time_3 = window.performance.now();
+      } else if (num === 4) {
+        time_4 = window.performance.now();
+      }
+    }
+
+    function stopTimer(num, t) {
+      if (num === 1) {
+        return decimalRound(t - time_1);
+      } else if (num === 2) {
+        return decimalRound(t - time_2);
+      } else if (num === 3) {
+        return decimalRound(t - time_3);
+      } else if (num === 4) {
+        return decimalRound(t - time_4);
+      }
+    }
+
+    function decimalRound(num) {
+      return Math.round((num + Number.EPSILON) * 100) / 100;
+    }
+
+    function clearBlock(num) {
+      document.querySelector(`#block_${num} .result_text`).innerText = "";
+      document.querySelector(`#block_${num} .max`).innerText = "";
+      document.getElementById(`block_${num}_bar_container`).replaceChildren();
+    }
+
+  </script>
+</html>

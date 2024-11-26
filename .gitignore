@@ -2,3 +2,4 @@ node_modules
 results
 bobik.bin
 uploads
+.DS_Store
