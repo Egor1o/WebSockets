@@ -18,7 +18,7 @@
       body {
         box-sizing: border-box;
         margin: 0;
-        border-width: 10em;
+        border-width: 1vh;
         background-color: black;
       }
 
@@ -38,39 +38,37 @@
         position: relative;
         width: 50vw;
         height: 50vh;
-        border-width: 5px;
-        border-style: solid;
+        border-width: 0.3vh;
         font-family: Verdana, Arial;
+        display: flex;
+        position: relative;
+        flex-direction: column;
       }
 
       #block_1 {
-        background-color: #7a8ff6;
+        background-color: #b2d2ff;
+        border-style: none solid solid none;
       }
 
       #block_2 {
         background-color: #fdafd5;
+        border-style: none none solid solid;
       }
 
       #block_3 {
         background-color: #adffb1;
+        border-style: solid solid none none;
       }
 
       #block_4 {
         background-color: #f8ff97;
-      }
-
-      .sub_block {
-        display: flex;
-        position: relative;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
+        border-style: solid none none solid;
       }
 
       .block_title {
         height: 15%;
         width: 100%;
-        font-size: 3vh;
+        font-size: 2.5vh;
         text-align: center;
         align-content: center;
         border-bottom-style: solid;
@@ -79,7 +77,7 @@
       }
 
       #block_1_title {
-        background-color: #8891bf;
+        background-color: #7997cf;
       }
 
       #block_2_title {
@@ -106,7 +104,7 @@
         position: absolute;
         height: 100%;
         width: 100%;
-        z-index: 10;
+        z-index: 15;
       }
 
       .text_overlay_top_margin {
@@ -123,57 +121,62 @@
         flex: 1;
         text-align: center;
         align-content: end;
-        font-size: 3.5vh;
+        font-size: 3vh;
         line-height: 100%;
         width: 100%;
         color: #000000c3;
       }
 
-      .result_text {
+      .result_background {
         flex: 2;
         text-align: center;
         align-content: center;
-        font-size: 5vh;
-        line-height: 100%;
         width: 100%;
+      }
+
+      .result_text {
+        font-size: 4.5vh;
+        line-height: 100%;
       }
 
       .max {
         flex: 1;
         text-align: center;
         align-content: start;
-        font-size: 3.5vh;
+        font-size: 3vh;
         line-height: 100%;
         width: 100%;
         color: #000000c3;
       }
 
       .block_bar_container {
-        position: absolute;
+        flex: auto;
         display: flex;
         flex-direction: row;
         height: 100%;
         width: 100%;
-        z-index: 1;
+        z-index: 2;
+        padding-top: 0.5vh;
       }
 
       .bar {
-        flex:1;
+        flex:auto;
         padding: 0;
         margin-top: auto;
         margin-bottom: 0;
         margin-left: 1px;
         margin-right: 1px;
         border-top-width: 2px;
-        border-bottom-width: 0;
         border-left-width: 2px;
         border-right-width: 2px;
+        border-bottom-width: 0;
+        z-index: 10;
       }
 
       #block_1_bar_container > .bar {
-        background-color: #0000004d;
+        background-color: #1c62b770;
         border-style: solid;
-        border-color: #04008c1a;
+        border-color: #586193b9;
       }
 
       #block_2_bar_container > .bar {
@@ -194,71 +197,99 @@
         border-color: #e9c422a6;
       }
 
+      .black_bottom_bar {
+        height: 0.2vh;
+        width: 100%;
+        background-color: black;
+        margin-bottom: 0;
+        z-index: 20;
+      }
+
+      .bar_container_container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
     </style>
   </head>
   <body>
     <div id="grid">
 
       <div id="block_1" class="block" onClick="block_1()">
-        <div id="sub_block_1" class="sub_block">
-          <div id="block_1_title" class="block_title noselect">WebSocket Test 1: Singular Calls</div>
-          <div id=test_view_1 class="test_view">
-            <div class="text_overlay">
-              <div class="text_overlay_top_margin"></div>
-              <div class="mean noselect"></div>
-              <div class="result_text noselect">Click to Step</div>
-              <div class="max noselect"></div>
-              <div class="text_overlay_bottom_margin"></div>
+        <div id="block_1_title" class="block_title noselect">WebSocket Test 1: Singular Calls</div>
+        <div id=test_view_1 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Step</span>
             </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
             <div id="block_1_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
           </div>
         </div>
       </div>
 
       <div id="block_2" class="block" onClick="block_2()">
-        <div id="sub_block_2" class="sub_block">
-          <div id="block_2_title" class="block_title noselect">HTTP Test 1: Singular Calls</div>
-          <div id=test_view_2 class="test_view">
-            <div class="text_overlay">
-              <div class="text_overlay_top_margin"></div>
-              <div class="mean noselect"></div>
-              <div class="result_text noselect">Click to Step</div>
-              <div class="max noselect"></div>
-              <div class="text_overlay_bottom_margin"></div>
+        <div id="block_2_title" class="block_title noselect">HTTP Test 1: Singular Calls</div>
+        <div id=test_view_2 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Step</span>
             </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
             <div id="block_2_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
           </div>
         </div>
       </div>
 
       <div id="block_3" class="block" onClick="block_3()">
-        <div id="sub_block_3" class="sub_block">
-          <div id="block_3_title" class="block_title noselect">WebSocket Test 2: Continuous Calls</div>
-          <div id=test_view_3 class="test_view">
-            <div class="text_overlay">
-              <div class="text_overlay_top_margin"></div>
-              <div class="mean noselect"></div>
-              <div class="result_text noselect">Click to Play/Stop</div>
-              <div class="max noselect"></div>
-              <div class="text_overlay_bottom_margin"></div>
+        <div id="block_3_title" class="block_title noselect">WebSocket Test 2: Continuous Calls</div>
+        <div id=test_view_3 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Play/Stop</span>
             </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
             <div id="block_3_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
           </div>
         </div>
       </div>
 
       <div id="block_4" class="block" onClick="block_4()">
-        <div id="sub_block_4" class="sub_block">
-          <div id="block_4_title" class="block_title noselect">HTTP Test 2: Continuous Calls</div>
-          <div id=test_view_4 class="test_view">
-            <div class="text_overlay">
-              <div class="text_overlay_top_margin"></div>
-              <div class="mean noselect"></div>
-              <div class="result_text noselect">Click to Play/Stop</div>
-              <div class="max noselect"></div>
-              <div class="text_overlay_bottom_margin"></div>
+        <div id="block_4_title" class="block_title noselect">HTTP Test 2: Continuous Calls</div>
+        <div id=test_view_4 class="test_view">
+          <div class="text_overlay">
+            <div class="text_overlay_top_margin"></div>
+            <div class="mean noselect"></div>
+            <div class="result_background">
+              <span class="result_text noselect">Click to Play/Stop</span>
             </div>
+            <div class="max noselect"></div>
+            <div class="text_overlay_bottom_margin"></div>
+          </div>
+          <div class="bar_container_container">
             <div id="block_4_bar_container" class="block_bar_container"></div>
+            <div class="black_bottom_bar"></div>
           </div>
         </div>
       </div>
@@ -383,10 +414,13 @@
       e.setAttribute("id", `block_1_bar_${i}`);
       e.classList.add("bar");
       ws_test_1_max = Math.max(t, ws_test_1_max);
-      e.style.height = `${100 * t / ws_test_1_max}%`;
+      e.style.height = `${100 * t / Math.max(ws_test_1_max, http_test_1_max)}%`;
       document.getElementById("block_1_bar_container").appendChild(e);
 
       // Set result
+      //document.querySelector("#block_1 .result_text").style.setProperty("background-color", "rgba(255, 255, 255, 0.5)");
+      //document.querySelector("#block_1 .result_text").style.setProperty("box-shadow", "0 0 5px 5px rgba(255, 255, 255, 0.5)");
+      d//ocument.querySelector("#block_1 .result_text").style.setProperty("border-radius", "0.5em");
       document.querySelector("#block_1 .result_text").innerText = `${t} ms`;
 
       // Set max value
@@ -415,7 +449,7 @@
       e.setAttribute("id", `block_3_bar_${i}`);
       e.classList.add("bar");
       ws_test_2_max = Math.max(t, ws_test_2_max);
-      e.style.height = `${100 * t / ws_test_2_max}%`;
+      e.style.height = `${100 * t / Math.max(ws_test_2_max, http_test_2_max)}%`;
       document.getElementById("block_3_bar_container").appendChild(e);
 
       // Set the result
@@ -457,7 +491,7 @@
           e.setAttribute("id", `block_2_bar_${i}`);
           e.classList.add("bar");
           http_test_1_max = Math.max(t, http_test_1_max);
-          e.style.height = `${100 * t / http_test_1_max}%`;
+          e.style.height = `${100 * t / Math.max(ws_test_1_max, http_test_1_max)}%`;
           document.getElementById("block_2_bar_container").appendChild(e);
 
           // Set result
@@ -494,7 +528,7 @@
           e.setAttribute("id", `block_4_bar_${i}`);
           e.classList.add("bar");
           http_test_2_max = Math.max(t, http_test_2_max);
-          e.style.height = `${100 * t / http_test_2_max}%`;
+          e.style.height = `${100 * t / Math.max(ws_test_2_max, http_test_2_max)}%`;
           document.getElementById("block_4_bar_container").appendChild(e);
 
           // Set result
