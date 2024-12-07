@@ -4,6 +4,8 @@ const protoLoader = require('@grpc/proto-loader');
 const {join} = require("node:path");
 const {createWriteStream} = require("node:fs");
 const PROTO_PATH = join(__dirname, '.proto');
+const {saveToCSV} = require("../../performance/utils/csv")
+const {markEndTime} = require("../../performance/utils/builders/websocket")
 const packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
     {
@@ -18,6 +20,8 @@ const packageDefinition = protoLoader.loadSync(
 const employee_proto = grpc.loadPackageDefinition(packageDefinition);
 
 function uploadFile(call, callback) {
+    let startedAt = process.hrtime()
+    let startTime = new Date().toISOString()
     const savePath = join(__dirname, 'uploaded_file.bin');
     const writeStream = createWriteStream(savePath);
 
@@ -29,7 +33,9 @@ function uploadFile(call, callback) {
 
     call.on('end', () => {
         writeStream.end();
-
+        const delta = markEndTime(startedAt)
+        const endTime = new Date().toISOString()
+        saveToCSV("grpc_results.csv", "streaming", delta, startTime, endTime, "gRPC")
         console.log('File received and saved to downloads folder');
         callback(null, { message: 'upload succ' }); // Send confirmation to client
     });

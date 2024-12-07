@@ -8,6 +8,7 @@ module.exports = {
   setMessage: setMessage,
   setImage: setImage,
   deleteResults,
+  markEndTime
 }
 
 function markEndTime(startedAt) {
